@@ -1,3 +1,10 @@
+1. cd my-app
+2. npm install (to install necessary modules)
+3. npm run dev (to run app)
+
+use tailwind, follow this website https://tailwindcss.com/docs/installation/using-vite
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
