@@ -3,6 +3,14 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 
 import './App.css'
+import axios from 'axios';
+
+const apiCall = () => {
+  axios.get('http://localhost:8080').then((data) => {
+    //this console.log will be in our frontend console
+    console.log(data)
+  })
+}
 
 function App() {
   const [count, setCount] = useState(0)
