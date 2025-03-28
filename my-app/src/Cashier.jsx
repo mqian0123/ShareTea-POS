@@ -9,6 +9,18 @@ import strawberryTea from './assets/Strawberry+Tea.jpg'
 import peachTea from './assets/Peach+Tea.jpg'
 import mangoGreenTea from './assets/Mango Green Tea.jpg'
 import kiwiTea from './assets/Kiwi+Aiyu+Fruit+Tea.jpg'
+import axios from 'axios';
+
+
+const apiCall = () => {
+    axios.get('http://localhost:8080/user').then((data) => {
+      //this console.log will be in our frontend console
+      console.log(data)
+    })
+    .catch(error => {
+        console.log("error");
+    });
+  }
 
 function Cashier () {
     const currentDate = new Date();
@@ -30,7 +42,7 @@ function Cashier () {
                     <p class = "p-5 font-sans">
                         Total: 20 Orders
                     </p>
-                    <button class = "bg-white text-emerald-900 font-sans font-bold rounded-full p-5 m-5">
+                    <button onClick={apiCall} class = "bg-white text-emerald-900 font-sans font-bold rounded-full p-5 m-5">
                         Report 📜
                     </button>
                     <button class = "bg-white text-emerald-900 font-sans rounded-full pl-2 pr-10 m-5 py-2">
