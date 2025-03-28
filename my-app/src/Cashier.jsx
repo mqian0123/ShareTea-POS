@@ -9,6 +9,18 @@ import strawberryTea from './assets/Strawberry+Tea.jpg'
 import peachTea from './assets/Peach+Tea.jpg'
 import mangoGreenTea from './assets/Mango Green Tea.jpg'
 import kiwiTea from './assets/Kiwi+Aiyu+Fruit+Tea.jpg'
+import axios from 'axios';
+
+
+const apiCall = () => {
+    axios.get('http://localhost:8080/user').then((data) => {
+      //this console.log will be in our frontend console
+      console.log(data)
+    })
+    .catch(error => {
+        console.log("error");
+    });
+  }
 
 function Cashier () {
     const currentDate = new Date();
