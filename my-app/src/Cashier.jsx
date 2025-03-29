@@ -9,19 +9,37 @@ import strawberryTea from './assets/Strawberry+Tea.jpg'
 import peachTea from './assets/Peach+Tea.jpg'
 import mangoGreenTea from './assets/Mango Green Tea.jpg'
 import kiwiTea from './assets/Kiwi+Aiyu+Fruit+Tea.jpg'
+import {useState} from 'react'
 
 function Cashier () {
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const currentDate = new Date();
     // const dateString = currentDate.toLocaleDateString();
     const date1 = currentDate.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
     
+
+    const items = [
+        { name: "Wintermelon Lemonade", price: 7.00, img: wintermelonLemonade, isSpecial: false, categoryName: "Fruit Tea" },
+        { name: "Kiwi Fruit Tea with Aiyu Jelly", price: 8.00, img: kiwiTea, isSpecial: true, categoryName: "Fruit Tea" },
+        { name: "Strawberry Tea", price: 5.00, img: strawberryTea, isSpecial: true, categoryName: "Fruit Tea" },
+        { name: "Peach Kiwi Tea with Aiyu Jelly", price: 6.50, img: peachTea, isSpecial: true, categoryName: "Fruit Tea" },
+        { name: "Honey Lemonade with Aloe Vera", price: 7.50, img: honeyLemonade, isSpecial: true, categoryName: "Fruit Tea" },
+        { name: "Mango Green Tea", price: 9.00, img: mangoGreenTea, isSpecial: true, categoryName: "Fruit Tea" },
+        { name: "Classic Milk Tea with Pearl", price: 9.00, img: logo, isSpecial: true, categoryName: "Milk Tea" },
+    ]
+
+    const filteredItems = items.filter(item => {
+        const matchesCategory = selectedCategory ? item.categoryName === selectedCategory : true;
+        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
 
     return (
         <div class = "flex flex-col ">
             <div class = "flex items-center justify-between p-5">
                 <div class = "flex items-center">
                     <img class = "max-h-28" src={logo}/>
-
                     <p className = "pl-10 font-sans text-emerald-900 font-bold">
                         {date1}
                     </p>
@@ -51,7 +69,7 @@ function Cashier () {
             </div>
             <div class = "flex m-5">
                 <div class = "flex flex-col w-3/5 mr-5">
-                    <form class="max-w-full">   
+                    <form class="max-w-full" onSubmit={(e) => e.preventDefault()}>   
                         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -59,45 +77,72 @@ function Cashier () {
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                                 </svg>
                             </div>
-                            <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Mockups, Logos..." required />
+                            <input type="search" 
+                            id="default-search" 
+                            value = {searchTerm}
+                            onChange = {(e) => setSearchTerm(e.target.value)}
+                            class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            placeholder="Search Menu Items..." required />
                             <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-emerald-700 hover:bg-emerald-900 focus:ring-4 focus:outline-none focus:ring-emerald-50 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
                         </div>
                     </form>
                     <div class = "flex overflow-auto">
-                        <Categories status="Available" categoryName = "Fruit Tea">
+                    <Categories status="Available" 
+                        categoryName = "All"
+                        onClick = {() => {
+                            setSelectedCategory(null);
+                          }}
+                        >
                         </Categories>
-                        <Categories status = "Available" categoryName = "Milk Tea">
-
+                        <Categories status="Available" 
+                        categoryName = "Fruit Tea"
+                        onClick = {() => {
+                            setSelectedCategory(selectedCategory === "Fruit Tea" ? null : "Fruit Tea");
+                          }}
+                        >
                         </Categories>
-                        <Categories status = "Available" categoryName = "Brewed Tea">
-
+                        <Categories status = "Available" categoryName = "Milk Tea"
+                        onClick = {() => {
+                            setSelectedCategory(selectedCategory === "Milk Tea" ? null : "Milk Tea");
+                          }}
+                        >
                         </Categories>
-                        <Categories status = "Available" categoryName = "Ice Blended">
+                        <Categories status = "Available" categoryName = "Brewed Tea"
+                        onClick = {() => {
+                            setSelectedCategory(selectedCategory === "Brewed Tea" ? null : "Brewed Tea");
+                          }}
+                        >
                         </Categories>
-                        <Categories status = "Available" categoryName = "Tea Mojito">
+                        <Categories status = "Available" categoryName = "Ice Blended"
+                        onClick = {() => {
+                            setSelectedCategory(selectedCategory === "Ice Blended" ? null : "Ice Blended");
+                          }}
+                        >
+                        </Categories>   
+                        <Categories status = "Available" categoryName = "Tea Mojito"
+                        onClick = {() => {
+                            setSelectedCategory(selectedCategory === "Tea Mojito" ? null : "Tea Mojito");
+                          }}
+                        >
                         </Categories>
-                        <Categories status = "Available" categoryName = "Creama">
+                        <Categories status = "Available" categoryName = "Creama"
+                        onClick = {() => {
+                            setSelectedCategory(selectedCategory === "Creama" ? null : "Creama");
+                          }}
+                        >
                         </Categories>
                     </div>
 
                     <div class = "grid grid-cols-3 gap-3">
-                        <ItemCard img={wintermelonLemonade} itemName = "Wintermelon Lemonade" itemPrice = "7.00" isSpecial = {false}>
-                        </ItemCard>
-
-                        <ItemCard img={kiwiTea} itemName = "Kiwi Fruit Tea with Aiyu Jelly" itemPrice = "8.00" isSpecial = {false}>
-                        </ItemCard>
-
-                        <ItemCard img={strawberryTea} itemName = "Strawberry Tea" itemPrice = "5.00" isSpecial = {false}>
-                        </ItemCard>
-
-                        <ItemCard img = {peachTea} itemName = "Peach Kiwi Tea with Aiyu Jelly" itemPrice = "6.50" isSpecial = {false}>
-                        </ItemCard>
-
-                        <ItemCard img = {honeyLemonade} itemName = "Honey Lemonade with Aloe Vera" itemPrice = "7.50" isSpecial = {false}>
-                        </ItemCard>
-
-                        <ItemCard img = {mangoGreenTea} itemName = "Mango Green Tea" itemPrice = "9.00" isSpecial = {false}>
-                        </ItemCard>
+                        {filteredItems.map((item, index) => (
+                            <ItemCard 
+                            key={index} 
+                            itemName={item.name} 
+                            itemPrice={item.price} 
+                            img={item.img} 
+                            isSpecial = {item.isSpecial}
+                            categoryName={item.categoryName}/>
+                        ))}
                     </div>
                 </div>
                 <div class = "w-2/5">

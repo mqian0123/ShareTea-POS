@@ -1,7 +1,10 @@
 import React from "react";
 import Modal from './Modal.jsx';
-function ItemCard (props) {
+import SpecialModal from './specialModal.jsx';
 
+
+function ItemCard (props) {
+    
     return (
 
         <div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
@@ -33,8 +36,8 @@ function ItemCard (props) {
                     <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm dark:bg-blue-200 dark:text-blue-800 ms-3">5.0</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-3xl font-bold text-gray-900 dark:text-white">${props.itemPrice}</span>
-                    <Modal></Modal>
+                    <span className="text-3xl font-bold text-gray-900 dark:text-white">${props.itemPrice}</span>
+                    {props.isSpecial ? <SpecialModal/> : <Modal />}
                 </div>
             </div>
         </div>
