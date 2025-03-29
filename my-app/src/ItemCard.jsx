@@ -5,6 +5,7 @@ import CustomModal from "./CustomModal.jsx";
 
 function ItemCard ({img, itemName, itemPrice, isSpecial}) {
 
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     console.log(itemName + ": " + isSpecial);
     const handleOpenModal = () => {
@@ -71,6 +72,7 @@ function ItemCard ({img, itemName, itemPrice, isSpecial}) {
                                     )
                                     
                                 ) : (
+
 
                                     isModalOpen && (
                                         <div className="flex justify-items-center">
