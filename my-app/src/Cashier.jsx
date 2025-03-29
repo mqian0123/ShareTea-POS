@@ -11,8 +11,6 @@ import mangoGreenTea from './assets/Mango Green Tea.jpg'
 import kiwiTea from './assets/Kiwi+Aiyu+Fruit+Tea.jpg'
 import {useState} from 'react'
 
-import {useState} from 'react'
-
 import axios from 'axios';
 
 
@@ -51,7 +49,6 @@ function Cashier () {
     });
 
     return (
-
         <div className = "flex flex-col ">
             <div className = "flex items-center justify-between p-5">
                 <div className = "flex items-center">
@@ -110,8 +107,10 @@ function Cashier () {
                         onClick = {() => {
                             setSelectedCategory(null);
                           }}
-                        >
-
+                        > </Categories>
+                    </div>
+                </div>
+            </div>
             <div class = "flex m-5">
                 <div class = "flex flex-col w-3/5 mr-5">
                     <form class="max-w-full" onSubmit={(e) => e.preventDefault()}>   
@@ -128,7 +127,6 @@ function Cashier () {
                     </form>
                     <div class = "flex overflow-auto">
               
-                        </Categories>
                         <Categories status="Available" 
                         categoryName = "Fruit Tea"
                         onClick = {() => {
@@ -184,12 +182,8 @@ function Cashier () {
                 <div className = "w-2/5">
                     Current Order Stats
                 </div>
-            </div>
-            
-            
-        </div>
-        
-
+            </div>  
+        </div>      
     )
 }
 
