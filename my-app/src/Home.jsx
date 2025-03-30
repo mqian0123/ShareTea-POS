@@ -24,7 +24,7 @@ function Home () {
               Cashier Menu
             </button>
             <button
-              onClick={() => navigate("/manager")}
+              onClick={() => navigate("/manager/dashboard")}
               className="btn-manager hover:cursor-pointer py-10 text-2xl font-semibold text-white rounded-2xl shadow-md transition"
             >
               Manager Menu
