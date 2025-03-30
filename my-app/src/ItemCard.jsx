@@ -3,7 +3,7 @@ import Modal from './Modal.jsx';
 import {useState, useEffect} from 'react';
 import CustomModal from "./CustomModal.jsx";
 
-function ItemCard ({img, itemName, itemPrice, isSpecial}) {
+function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder}) {
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,18 +18,16 @@ function ItemCard ({img, itemName, itemPrice, isSpecial}) {
         setIsModalOpen(false);
     };
 
-    useEffect(() => {
-        console.log("isModalOpen updated:", isModalOpen);
-    }, [isModalOpen]);
+    
 
         return (
-            <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+            <div className="w-full max-w-sm bg-white border border-emerald-800 rounded-lg shadow-sm ">
                 <a href="#">
                     <img className="p-8 rounded-t-lg" src={img} alt="product image" />
                 </a>
                 <div className="px-5 pb-5">
                     <a href="#">
-                        <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{itemName}</h5>
+                        <h5 className="text-xl font-semibold tracking-tight text-gray-900">{itemName}</h5>
                     </a>
                     <div className="flex items-center mt-2.5 mb-5">
                         <div className="flex items-center space-x-1 rtl:space-x-reverse">
@@ -52,7 +50,7 @@ function ItemCard ({img, itemName, itemPrice, isSpecial}) {
                         <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm dark:bg-blue-200 dark:text-blue-800 ms-3">5.0</span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white">${itemPrice}</span>
+                        <span className="text-3xl font-bold text-gray-900">${itemPrice}</span>
                         <button 
                             onClick={handleOpenModal}
                             className="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
@@ -64,21 +62,16 @@ function ItemCard ({img, itemName, itemPrice, isSpecial}) {
                         {   
                                 isSpecial ? (
                                     isModalOpen && (
-                                        <div className="flex justify-items-center">
-                                            <CustomModal onClose={handleCloseModal}>
-                                            </CustomModal>
-                                        </div>
-                                        
+                                        <CustomModal itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder}>
+                                        </CustomModal>
                                     )
                                     
                                 ) : (
 
 
                                     isModalOpen && (
-                                        <div className="flex justify-items-center">
-                                            <Modal  onClose={handleCloseModal}>
+                                            <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder}>
                                             </Modal>
-                                        </div>
                                     )
                                 )
                         }
