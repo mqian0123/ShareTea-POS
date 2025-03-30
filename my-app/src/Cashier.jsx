@@ -10,6 +10,7 @@ import peachTea from './assets/Peach+Tea.jpg'
 import mangoGreenTea from './assets/Mango Green Tea.jpg'
 import kiwiTea from './assets/Kiwi+Aiyu+Fruit+Tea.jpg'
 import {useState} from 'react'
+import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -26,6 +27,7 @@ const apiCall = () => {
 
 
 function Cashier () {
+    const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const currentDate = new Date();
@@ -52,7 +54,7 @@ function Cashier () {
         <div className = "flex flex-col ">
             <div className = "flex items-center justify-between p-5">
                 <div className = "flex items-center">
-                    <img className = "max-h-28" src={logo}/>
+                    <img className = "hover:cursor-pointer max-h-28" src={logo} onClick={() => navigate("/")}/>
 
                     <p className = "pl-10 font-sans text-emerald-900 font-bold">
                         {date1}

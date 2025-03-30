@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@plugin "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
+
+.btn-cashier {
+    background-color: #014510;
+  }
+  .btn-cashier:hover {
+    background-color: #002408;
+  }
+  
+  .btn-manager {
+    background-color: #596e5c;
+  }
+  .btn-manager:hover {
+    background-color: #3e4c40;
+  }
+  
+  .btn-kiosk {
+    background-color: #019857;
+  }
+  .btn-kiosk:hover {
+    background-color: #017543;
+  }
