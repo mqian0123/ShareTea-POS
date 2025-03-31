@@ -17,7 +17,13 @@ import SwipeableOrderButton from './SwipeableOrderButton.jsx'
 
 
 const apiCall = () => {
-    axios.get('http://localhost:8080/user').then((data) => {
+    const data = {
+        name: "BLAHBLHBALBHALBHAHBABHBL",
+        role: "Developer",
+        phone_number: "dingus",
+        email: "dingus@email.com"
+    }
+    axios.post('http://localhost:8080/cashier/employees', data).then((data) => {
       //this console.log will be in our frontend console
     console.log(data)
     })

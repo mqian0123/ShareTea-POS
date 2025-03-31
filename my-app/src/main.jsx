@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
+import Cashier from './Cashier.jsx'
 import AppRoutes from "./routes";
 import 'flowbite';
 import 'flowbite-react';
