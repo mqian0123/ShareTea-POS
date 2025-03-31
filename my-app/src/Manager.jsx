@@ -29,6 +29,7 @@ import {
   ];
 
 function Manager() {
+    const navigate = useNavigate();
     const [pieData, setPieData] = useState([
         { name: 'Card', value: 55.78, color: '#A3E635' },
         { name: 'Cash', value: 44.22, color: '#FACC15' },
