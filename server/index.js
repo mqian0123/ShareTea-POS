@@ -1,5 +1,6 @@
 //index.js
 const cashierRoutes = require('./routes/cashier');
+const managerRoutes = require('./routes/manager')
 
 const express = require('express');
 const app = express();
@@ -25,8 +26,9 @@ app.get('/', (req, res) => {
 })
 
 app.use('/cashier', cashierRoutes);
+app.use('/manager', managerRoutes);
 
 
 app.listen(10000, () => {
-      console.log('server listening on port 8080')
+      console.log('server listening on port 10000')
 })
