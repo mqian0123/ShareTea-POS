@@ -28,6 +28,8 @@ import { useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google'
 import axios from 'axios';
 import SwipeableOrderButton from './SwipeableOrderButton.jsx'
+import { useLocation } from 'react-router-dom';
+
 
 const apiCall = () => {
     const data = {
@@ -47,6 +49,8 @@ const apiCall = () => {
 
 
 function Cashier () {
+    const location = useLocation();
+    const { userName, email } = location.state || {}; // Destructure userName and email from state
     const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -159,7 +163,7 @@ function Cashier () {
                 <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full md:me-0 focus:ring-4 focus:ring-gray-100 bg-white p-3" type="button">
                     <span class="sr-only">Open user menu</span>
                     <img class="w-8 h-8 me-2 rounded-full" src={userIcon} alt="user photo" />
-                    Bonnie Green
+                    {userName}
                     <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                     </svg>
@@ -167,8 +171,7 @@ function Cashier () {
 
                 <div id="dropdownAvatarName" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
                     <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                    <div class="font-medium ">Pro User</div>
-                    <div class="truncate">name@flowbite.com</div>
+                    <div>{email}</div>
                     </div>
                     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
                     <li>
@@ -213,6 +216,7 @@ function Cashier () {
                     <div className = "flex overflow-auto">
                         <Categories status="Available" 
                         categoryName = "All"
+                        
                         onClick = {() => {
                             setSelectedCategory(null);
                           }}
