@@ -1,7 +1,9 @@
 import './Manager.css';
 import logo from './assets/Share Tea.png';
 import { useNavigate } from 'react-router-dom';
-import { Home, User, ChefHat, SquarePen, ClipboardList} from 'lucide-react';
+import { Home, BarChart2, SquarePen, FileText, User, ChefHat, ClipboardList } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import {
     PieChart, Pie, Cell,
@@ -9,10 +11,7 @@ import {
   } from 'recharts';
   
 //This is all temp data for the charts, will be replaced with real data from the database later
-  const pieData = [
-    { name: 'Card', value: 55.78, color: '#A3E635' },
-    { name: 'Cash', value: 44.22, color: '#FACC15' },
-  ];
+
   
   const barData = [
     { name: 'Jan', value: 8000 },
@@ -31,6 +30,32 @@ import {
 
 function Manager() {
     const navigate = useNavigate();
+    const [pieData, setPieData] = useState([
+        { name: 'Card', value: 55.78, color: '#A3E635' },
+        { name: 'Cash', value: 44.22, color: '#FACC15' },
+    ]);
+
+    useEffect(() => {
+        const fetchPieData = async () => {
+            try {
+                const response = await axios.get('https://server-pkpv.onrender.com/manager/credit');
+                const ratio = response.data.ratio ?? 0;
+                let percentage = parseFloat((ratio * 100).toFixed(2))
+                // console.log(percentage)
+                const newPieData = [
+                    { name: 'Credit', value: percentage, color: '#FACC15' },
+                    { name: 'Cash', value: (100 - percentage), color: '#A3E635' },
+                ];
+                // console.log("Fetched Pie Data:", newPieData);  // Log the fetched data
+                setPieData(newPieData);
+            } catch (error) {
+                console.error('Error fetching credit ratio:', error);
+                setPieData([]);  // Set empty data if there's an error
+            }
+        };
+        fetchPieData();
+    }, []);  // Empty dependency array ensures it runs once when the component mounts
+    
 
     const navItems = [
         { name: 'Dashboard', icon: <Home size={25} />, path: '/manager/dashboard', active: true },
