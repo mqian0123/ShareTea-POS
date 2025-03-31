@@ -6,11 +6,17 @@ import Cashier from './Cashier.jsx'
 import AppRoutes from "./routes";
 import 'flowbite';
 import 'flowbite-react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const CLIENT_ID = "421448961972-f799sodp1c0snskd77t9vngmatvoo3ko.apps.googleusercontent.com"
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <GoogleOAuthProvider clientId={CLIENT_ID}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   </StrictMode>,
 )
