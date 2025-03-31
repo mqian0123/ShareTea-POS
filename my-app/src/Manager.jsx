@@ -1,7 +1,7 @@
 import './Manager.css';
 import logo from './assets/Share Tea.png';
 import { useNavigate } from 'react-router-dom';
-import { Home, BarChart2, SquarePen, FileText} from 'lucide-react';
+import { Home, User, ChefHat, SquarePen, ClipboardList} from 'lucide-react';
 
 import {
     PieChart, Pie, Cell,
@@ -34,10 +34,10 @@ function Manager() {
 
     const navItems = [
         { name: 'Dashboard', icon: <Home size={25} />, path: '/manager/dashboard', active: true },
-        { name: 'Employees', icon: <BarChart2 size={25} />, path: '/manager/employee' },
+        { name: 'Employees', icon: <User size={25} />, path: '/manager/employee' },
         { name: 'Menu Items', icon: <SquarePen size={25} />, path: '/manager/menu' },
-        { name: 'Inventory', icon: <SquarePen size={25} />,  path: '/manager/inventory'},
-        { name: 'Reports', icon: <FileText size={25} />, path: '/manager/reports' }
+        { name: 'Inventory', icon: <ChefHat  size={25} />,  path: '/manager/inventory'},
+        { name: 'Reports', icon: <ClipboardList size={25} />, path: '/manager/reports' }
     ];
 
     const renderSection = (items) => (
