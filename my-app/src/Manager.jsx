@@ -34,9 +34,10 @@ function Manager() {
 
     const navItems = [
         { name: 'Dashboard', icon: <Home size={25} />, path: '/manager/dashboard', active: true },
-        { name: 'Analytics', icon: <BarChart2 size={25} />, path: '/manager/analytics' },
-        { name: 'Edit Menu Items', icon: <SquarePen size={25} />, path: '/manager/edit' },
-        { name: 'Reports', icon: <FileText size={25} />, path: '/manager/reports' },
+        { name: 'Employees', icon: <BarChart2 size={25} />, path: '/manager/employee' },
+        { name: 'Menu Items', icon: <SquarePen size={25} />, path: '/manager/menu' },
+        { name: 'Inventory', icon: <SquarePen size={25} />,  path: '/manager/inventory'},
+        { name: 'Reports', icon: <FileText size={25} />, path: '/manager/reports' }
     ];
 
     const renderSection = (items) => (
