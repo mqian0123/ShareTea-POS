@@ -9,12 +9,25 @@ import strawberryTea from './assets/Strawberry+Tea.jpg'
 import peachTea from './assets/Peach+Tea.jpg'
 import mangoGreenTea from './assets/Mango Green Tea.jpg'
 import kiwiTea from './assets/Kiwi+Aiyu+Fruit+Tea.jpg'
+import coffeeMilkTea from './assets/Classic+Milk+Tea.jpg'
+import classicPearlMilkTea from './assets/Classic+Pearl+Milk+Tea.jpg'
+import honeyMilkTea from './assets/Honey+Milk+Tea.jpg'
+import mangoGreenMilkTea from './assets/Mango+Green+Milk+Tea.jpg'
+import classicTea from './assets/Classic+Tea.jpg'
+import honeyTea from './assets/Honey+Tea.jpg'
+import wintermelonTea from './assets/Wintermelon+Tea.jpg'
+import milkIceBlended from './assets/Milk+Tea+Ice+Blended.jpg'
+import mangoIceBlended from './assets/Mango+Ice+Blended.jpg'
+import oreoIceBlended from './assets/Oreo+Ice+Blended.jpg'
+import mangoMojito from './assets/Mango+Mojito.jpg'
+import strawberryMojito from './assets/Strawberry+Mojito.jpg'
+import limeMojito from './assets/Lime+Mojito.jpg'
+import wintermelonCreama from './assets/Wintermelon+Creama.jpg'
 import {useState, useRef} from 'react'
 import { useNavigate } from 'react-router-dom';
-
+import { googleLogout } from '@react-oauth/google'
 import axios from 'axios';
 import SwipeableOrderButton from './SwipeableOrderButton.jsx'
-
 
 const apiCall = () => {
     axios.get('http://localhost:8080/user').then((data) => {
@@ -39,12 +52,26 @@ function Cashier () {
 
     const menuItems = [
         { name: "Wintermelon Lemonade", price: 7.00, img: wintermelonLemonade, isSpecial: false, categoryName: "Fruit Tea" },
-        { name: "Kiwi Fruit Tea with Aiyu Jelly", price: 8.00, img: kiwiTea, isSpecial: true, categoryName: "Fruit Tea" },
-        { name: "Strawberry Tea", price: 5.00, img: strawberryTea, isSpecial: true, categoryName: "Fruit Tea" },
-        { name: "Peach Kiwi Tea with Aiyu Jelly", price: 6.50, img: peachTea, isSpecial: true, categoryName: "Fruit Tea" },
-        { name: "Honey Lemonade with Aloe Vera", price: 7.50, img: honeyLemonade, isSpecial: true, categoryName: "Fruit Tea" },
-        { name: "Mango Green Tea", price: 9.00, img: mangoGreenTea, isSpecial: true, categoryName: "Fruit Tea" },
-        { name: "Classic Milk Tea with Pearl", price: 9.00, img: logo, isSpecial: true, categoryName: "Milk Tea" },
+        { name: "Kiwi Fruit Tea with Aiyu Jelly", price: 8.00, img: kiwiTea, isSpecial: false, categoryName: "Fruit Tea" },
+        { name: "Strawberry Tea", price: 5.00, img: strawberryTea, isSpecial: false, categoryName: "Fruit Tea" },
+        { name: "Peach Kiwi Tea with Aiyu Jelly", price: 6.50, img: peachTea, isSpecial: false, categoryName: "Fruit Tea" },
+        { name: "Honey Lemonade with Aloe Vera", price: 7.50, img: honeyLemonade, isSpecial: false, categoryName: "Fruit Tea" },
+        { name: "Mango Green Tea", price: 9.00, img: mangoGreenTea, isSpecial: false, categoryName: "Fruit Tea" },
+        { name: "Classic Pearl Milk Tea", price: 9.00, img: classicPearlMilkTea, isSpecial: true, categoryName: "Milk Tea" },
+        { name: "Coffee Milk Tea", price: 10.00, img: coffeeMilkTea, isSpecial: false, categoryName: "Milk Tea"},
+        { name: "Honey Milk Tea", price: 9.00, img: honeyMilkTea, isSpecial: true, categoryName: "Milk Tea" },
+        { name: "Mango Green Milk Tea", price: 10.00, img: mangoGreenMilkTea, isSpecial: false, categoryName: "Milk Tea"},
+        { name: "Classic Tea", price: 10.00, img: classicTea, isSpecial: true, categoryName: "Brewed Tea"},
+        { name: "Honey Tea", price: 9.00, img: honeyTea, isSpecial: true, categoryName: "Brewed Tea" },
+        { name: "Wintermelon Tea", price: 10.00, img: wintermelonTea, isSpecial: false, categoryName: "Brewed Tea"},
+        { name: "Milk Tea Ice Blended with Pearl", price: 10.00, img: milkIceBlended, isSpecial: false, categoryName: "Ice Blended"},
+        { name: "Mango Ice Blended with Ice Cream", price: 9.00, img: mangoIceBlended, isSpecial: false, categoryName: "Ice Blended" },
+        { name: "Oreo Ice Blended with Pearl", price: 10.00, img: oreoIceBlended, isSpecial: false, categoryName: "Ice Blended"},
+        { name: "Lime Mojito", price: 10.00, img: limeMojito, isSpecial: false, categoryName: "Tea Mojito"},
+        { name: "Mango Mojito", price: 9.00, img: mangoMojito, isSpecial: false, categoryName: "Tea Mojito" },
+        { name: "Strawberry Mojito", price: 10.00, img: strawberryMojito, isSpecial: false, categoryName: "Tea Mojito"},
+        { name: "Wintermelon Creama", price: 10.00, img: wintermelonCreama, isSpecial: false, categoryName: "Creama"},
+
     ]
 
     const filteredItems = menuItems.filter(item => {
@@ -97,6 +124,12 @@ function Cashier () {
         setCustomerName('');
     }
 
+
+    const handleLogout = () => {
+        googleLogout();
+        navigate('/');
+    }
+
     return (
         <div className = "flex flex-col ">
 
@@ -116,20 +149,37 @@ function Cashier () {
                     <button className = "bg-white text-emerald-900 font-sans font-bold rounded-full p-5 m-5">
                         Report 📜
                     </button>
-                    <button className = "bg-white text-emerald-900 font-sans rounded-full pl-2 pr-10 m-5 py-2">
-                        <div className = "flex items-center">
-                            <img className = "max-h-10 pr-5" src = {userIcon}/>
-                            
-                            <div className = "text-left">
-                                <p className = "font-bold">
-                                    Samantha W
-                                </p>
-                                <p>
-                                    Cashier
-                                </p>
-                            </div>
-                        </div>
-                    </button>
+                    
+                <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full md:me-0 focus:ring-4 focus:ring-gray-100 bg-white p-3" type="button">
+                    <span class="sr-only">Open user menu</span>
+                    <img class="w-8 h-8 me-2 rounded-full" src={userIcon} alt="user photo" />
+                    Bonnie Green
+                    <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
+
+                <div id="dropdownAvatarName" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+                    <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                    <div class="font-medium ">Pro User</div>
+                    <div class="truncate">name@flowbite.com</div>
+                    </div>
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+                    </li>
+                    </ul>
+                    <div class="py-2">
+                    <a onClick = {handleLogout} href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+                    </div>
+                </div>
+
                 </div>
             </div>
 
@@ -216,7 +266,7 @@ function Cashier () {
                 </div>
 
                 {/* Checkout Menu */}
-                <div className = "w-2/5 bg-white rounded-l-3xl grid auto-rows-min ">
+                <div className = "w-2/5 bg-white rounded-l-3xl grid auto-rows-min h-min ">
                     {/* Header */}
                     <div className='flex items-center p-5'>
                         <button type="button" className="border p-5 rounded-full bg-emerald-800 text-white">

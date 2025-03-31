@@ -18,7 +18,7 @@ function Home () {
         <div className="flex flex-col items-center bg-gradient-to-b from-emerald-50 to-emerald-100 py-16">
           <div className="mt-6 flex flex-col gap-10 w-full max-w-md">
             <button
-              onClick={() => navigate("/cashier")}
+              onClick={() => navigate("/login")}
               className="btn-cashier hover:cursor-pointer py-10 text-2xl font-semibold text-white rounded-2xl shadow-md transition"
             >
               Cashier Menu
