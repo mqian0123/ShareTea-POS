@@ -1,5 +1,7 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode'
+
 function Login () {
 
     const navigate = useNavigate();
@@ -35,7 +37,11 @@ function Login () {
                             </div>
                             <div className='flex justify-center'>
                                 <GoogleLogin shape='pill'
-                                            onSuccess={() => navigate('/cashier')
+                                            onSuccess={(response) => {
+                                                const userName = jwtDecode(response.credential).name;
+                                                const email = jwtDecode(response.credential).email;
+                                                navigate('/cashier',  { state: {userName, email} });
+                                            }
                                             }
                                             onError={() => {
                                                 console.log('Login Failed');
