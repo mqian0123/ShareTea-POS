@@ -27,6 +27,6 @@ app.get('/', (req, res) => {
 app.use('/cashier', cashierRoutes);
 
 
-app.listen(8080, () => {
+app.listen(10000, () => {
       console.log('server listening on port 8080')
 })
