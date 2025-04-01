@@ -1,4 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+
+
+/**
+ * 
+ * @param  itemName - The name of the item
+ * @param  itemPrice - The price of the item
+ * @param  img - The image of the item 
+ * @param  onClose - The function to close the modal
+ * @param  addToOrder - The function to add the item to the order
+ *  
+ * @returns {JSX.Element} - The modal toppings selection component
+ * 
+ * @author Seshadithya Saravanan
+ */
+
 
 function CustomModal ( {itemName, itemPrice, img, onClose, addToOrder}) {
 
@@ -16,27 +31,25 @@ function CustomModal ( {itemName, itemPrice, img, onClose, addToOrder}) {
             });
         };
 
-        const [selectedTeaType, setSelectedTeaType] = useState(""); // State for selected radio button
+        // States to track the selected tea type, ice level, and sugar level
+        //TODO: Rename these functions to be more descriptive
 
+        const [selectedTeaType, setSelectedTeaType] = useState("");
         const handleRadioChange1 = (event) => {
             setSelectedTeaType(event.target.value);
              // Update the selected tea type
         };
 
-        const [selectedIceLevel, setSelectedIceLevel] = useState(""); // State for selected radio button
-
+        const [selectedIceLevel, setSelectedIceLevel] = useState("");
         const handleRadioChange2 = (event) => {
             setSelectedIceLevel(event.target.value);
-             // Update the selected tea type
         };
 
         
 
-        const [selectedSugarLevel, setSelectedSugarLevel] = useState(""); // State for selected radio button
-
+        const [selectedSugarLevel, setSelectedSugarLevel] = useState("");
         const handleRadioChange3 = (event) => {
             setSelectedSugarLevel(event.target.value);
-             // Update the selected tea type
         };
 
         return (

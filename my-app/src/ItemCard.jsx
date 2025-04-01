@@ -1,34 +1,51 @@
 import React from "react";
 import Modal from './Modal.jsx';
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import CustomModal from "./CustomModal.jsx";
+
+/**
+ * 
+ * @param {string} img - The image of the item.
+ * @param {string} itemName - The name of the item.
+ * @param {number} itemPrice - The price of the item.
+ * @param {boolean} isSpecial - Whether the item is a special or not.
+ * @param {function} addToOrder - The function to add the item to the order.
+ * @returns {JSX.Element} - The item card component.
+ * 
+ * @description This component is used to display the item card.
+ * 
+ * @author Seshadithya Saravanan
+ */
 
 function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder}) {
 
-
+    // State to track whether the modal for the toppings selection is open
     const [isModalOpen, setIsModalOpen] = useState(false);
-    console.log(itemName + ": " + isSpecial);
     const handleOpenModal = () => {
         setIsModalOpen(true);
-        console.log("Button clicked");
-        // console.log("isopen: " + isModalOpen);
     };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
 
-    
-
         return (
             <div className="w-full max-w-sm bg-white border border-emerald-800 rounded-lg shadow-sm ">
+
+                {/* Item Image  */}
                 <a href="#">
                     <img className="p-8 rounded-t-lg" src={img} alt="product image" />
                 </a>
+
+                {/* Item Details like price ratings and add to cart button */}
                 <div className="px-5 pb-5">
                     <a href="#">
                         <h5 className="text-xl font-semibold tracking-tight text-gray-900">{itemName}</h5>
                     </a>
+
+                    {/* Ratings
+                    //TODO: Change the ratings dynamically
+                    */}
                     <div className="flex items-center mt-2.5 mb-5">
                         <div className="flex items-center space-x-1 rtl:space-x-reverse">
                             <svg className="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
@@ -49,6 +66,7 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder}) {
                         </div>
                         <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-sm dark:bg-blue-200 dark:text-blue-800 ms-3">5.0</span>
                     </div>
+
                     <div className="flex items-center justify-between">
                         <span className="text-3xl font-bold text-gray-900">${itemPrice}</span>
                         <button 
@@ -59,6 +77,9 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder}) {
                         </button>
                     </div>
                     
+                    {/* Conditionally rendering the toppings modal based on the type of drink and if the user clicked on the add to cart button 
+                        //TODO: Center the modal
+                    */}
                         {   
                                 isSpecial ? (
                                     isModalOpen && (
