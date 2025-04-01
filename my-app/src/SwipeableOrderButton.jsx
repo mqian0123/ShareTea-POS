@@ -1,31 +1,61 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+/**
+ * A React component that provides a swipeable button for placing an order.
+ * The button can be dragged to the right to complete an action, and it resets automatically after completion.
+ *
+ * @param {Function} setOrderList - A function to update the order list.
+ * @param {Function} clearUserName - A function to clear the username after the order is placed.
+ * @author Garry Peter Thompson
+ */
 function SwipeableOrderButton({ setOrderList, clearUserName }) {
+    // State to track whether the button is being dragged
     const [isDragging, setIsDragging] = useState(false);
+
+    // State to track the current position of the button
     const [position, setPosition] = useState(0);
+
+    // State to track whether the swipe action is completed
     const [completed, setCompleted] = useState(false);
+
+    // Reference to the draggable button element
     const buttonRef = useRef(null);
+
+    // Reference to the container element
     const containerRef = useRef(null);
+
+    // Reference to store the maximum draggable position
     const maxPosition = useRef(0);
 
+    /**
+     * useEffect hook to calculate the maximum draggable position dynamically
+     * based on the container and button widths.
+     */
     useEffect(() => {
         if (containerRef.current && buttonRef.current) {
-            // Calculate maxPosition dynamically based on container and button widths
             maxPosition.current = containerRef.current.clientWidth - buttonRef.current.offsetWidth;
         }
     }, []);
 
+    /**
+     * Handles the mouse down event to start dragging the button.
+     */
     const handleMouseDown = () => {
         setIsDragging(true);
     };
 
+    /**
+     * Handles the mouse move event to update the button's position while dragging.
+     *
+     * @param {MouseEvent} e - The mouse move event.
+     */
     const handleMouseMove = (e) => {
         if (isDragging && !completed) {
             const containerRect = containerRef.current.getBoundingClientRect();
             const newPosition = Math.max(0, Math.min(e.clientX - containerRect.left - buttonRef.current.offsetWidth / 2, maxPosition.current));
             setPosition(newPosition);
 
-            // Check if swipe is completed
+            // Check if the swipe action is completed
             if (newPosition >= maxPosition.current) {
                 setCompleted(true);
                 placeOrder();
@@ -33,6 +63,10 @@ function SwipeableOrderButton({ setOrderList, clearUserName }) {
         }
     };
 
+    /**
+     * Handles the mouse up event to stop dragging the button.
+     * Resets the button's position if the swipe action is not completed.
+     */
     const handleMouseUp = () => {
         if (!completed) {
             setPosition(0);
@@ -40,6 +74,10 @@ function SwipeableOrderButton({ setOrderList, clearUserName }) {
         setIsDragging(false);
     };
 
+    /**
+     * Handles the logic for placing an order.
+     * Clears the order list and username, and resets the button after a short delay.
+     */
     const placeOrder = () => {
         console.log('Order placed successfully!');
         setOrderList([]);
@@ -49,9 +87,10 @@ function SwipeableOrderButton({ setOrderList, clearUserName }) {
         setTimeout(() => {
             setPosition(0);
             setCompleted(false);
-        }, 1000); // Reset after 2 seconds
+        }, 1000); // Reset after 1 second
     };
 
+    // Calculate the progress percentage based on the button's position
     const progress = Math.min(100, (position / maxPosition.current) * 100);
 
     return (
