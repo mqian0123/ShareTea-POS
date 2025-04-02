@@ -1,3 +1,12 @@
+/**
+ * @component Cashier
+ * @description This is the landing page for the cashier side GUI.
+ * 
+ * @version 1.4
+ * @author Seshadithya Saravanan
+ * @author Luke Gutierrez
+ */
+
 import './Cashier.css'
 import logo from './assets/Share Tea.png'
 import ItemCard from './ItemCard.jsx'
@@ -23,11 +32,13 @@ import mangoMojito from './assets/Mango+Mojito.jpg'
 import strawberryMojito from './assets/Strawberry+Mojito.jpg'
 import limeMojito from './assets/Lime+Mojito.jpg'
 import wintermelonCreama from './assets/Wintermelon+Creama.jpg'
-import {useState, useRef} from 'react'
+import {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google'
 import axios from 'axios';
 import SwipeableOrderButton from './SwipeableOrderButton.jsx'
+import { useLocation } from 'react-router-dom';
+
 
 const apiCall = () => {
     const data = {
@@ -46,16 +57,41 @@ const apiCall = () => {
 }
 
 
+/**
+ * 
+ * @returns {JSX.Element}
+ * @description This function returns the JSX for the Cashier page.
+ * @author Seshadithya Saravanan
+ * @author Luke Gutierrez
+ * 
+ * 
+ */
+
 function Cashier () {
-    const navigate = useNavigate();
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
+
+    // Get the current date and format it to display the day, date, and month
     const currentDate = new Date();
     const date1 = currentDate.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
-    const [activeButton, setActiveButton] = useState(0);
+
+    // Location hook to get state from previous page (login page) so we can get the user's name and email from the google oAuth API
+    const location = useLocation();
+    const { userName = "Guest", email = "guest.gmail.com"} = location.state || {}; // Destructure userName and email from state
+
+    // navigate hook to navigate to different pages
+    const navigate = useNavigate();
+
+    // State hooks to store the selected category, search term, and order list
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const [orderList, setOrderList] = useState([]);
+
+    // State hooks for the order types
+    const [activeButton, setActiveButton] = useState(0);
+
+    // State hook for customer name so that it can be cleared after the order is placed
     const [customerName, setCustomerName] = useState("");
 
+    // Menu items
     const menuItems = [
         { name: "Wintermelon Lemonade", price: 7.00, img: wintermelonLemonade, isSpecial: false, categoryName: "Fruit Tea" },
         { name: "Kiwi Fruit Tea with Aiyu Jelly", price: 8.00, img: kiwiTea, isSpecial: false, categoryName: "Fruit Tea" },
@@ -80,18 +116,38 @@ function Cashier () {
 
     ]
 
+    /**
+     * @description Filter the menu items based on the selected category and search term
+     * @returns {Array} filteredItems - The filtered menu items
+     * @author Luke Gutierrez
+     * 
+     */
     const filteredItems = menuItems.filter(item => {
         const matchesCategory = selectedCategory ? item.categoryName === selectedCategory : true;
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesCategory && matchesSearch;
     });
 
+    // Order types data structure for the order type button group
     const orderType = [
         { id: 1, text: "Dine in" },
         { id: 2, text: "Take out" },
         { id: 3, text: "Online" }
     ];
 
+    /** 
+     * @description Add an item to the order list
+     * @param {String} name - The name of the item
+     * @param {Number} price - The price of the item
+     * @param {String} img - The image of the item
+     * @param {Array} toppingsList - The list of toppings
+     * @param {String} selectedTeaType - The selected tea type
+     * @param {String} selectedIceLevel - The selected ice level
+     * @param {String} selectedSugarLevel - The selected sugar level
+     * @returns {Void} - No return value
+     * 
+     * @author Seshadithya Saravanan
+    */
     const addToOrder = (name, price, img, toppingsList, selectedTeaType, selectedIceLevel, selectedSugarLevel) => {
         const newItem = {
             name: name,
@@ -107,17 +163,36 @@ function Cashier () {
         setOrderList([...orderList, newItem]);
     };
 
+    /**
+     * @description Increment the quantity of an item in the order list
+     * @param {String} name - The name of the item
+     * @returns {Void} - No return value
+     * 
+     * @author Seshadithya Saravanan
+     */
     const incrementQuantity = (name) => {
         setOrderList(orderList.map((item) => item.name === name ? {...item, quantity: item.quantity + 1, total: (item.quantity + 1) * item.price } : item));
     }
 
+    /**
+     * @description Decrement the quantity of an item in the order list
+     * @param {String} name - The name of the item
+     * @returns {Void} - No return value
+     * 
+     * @author Seshadithya Saravanan
+     */
     const decrementQuantity = (name) => {
         setOrderList(orderList.map((item) => item.name === name && item.quantity > 1 
                                                             ? {...item, quantity: item.quantity - 1, total: (item.quantity - 1) * item.price } 
                                                             : item));         
     }
-
     
+    /**
+     * @description Calculate the total price of all the items in the order list
+     * @returns {Number} sum - The total price of all the items in the order list
+     * 
+     * @author Seshadithya Saravanan
+     */
     const calculateTotal = () => {
         let sum = 0;
         for (let index = 0; index < orderList.length; index++) {
@@ -126,11 +201,23 @@ function Cashier () {
         return sum;
     }
 
+    /**
+     * @description Clear the customer name after the order is placed
+     * @returns {Void} - No return value
+     * 
+     * @author Seshadithya Saravanan
+     */
     const clearUserName = () => {
         setCustomerName('');
     }
 
 
+    /**
+     * @description Handle the logout button click event
+     * @returns {Void} - No return value
+     * 
+     * @author Seshadithya Saravanan
+     */
     const handleLogout = () => {
         googleLogout();
         navigate('/');
@@ -155,43 +242,45 @@ function Cashier () {
                     <button className = "bg-white text-emerald-900 font-sans font-bold rounded-full p-5 m-5">
                         Report 📜
                     </button>
-                    
-                <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full md:me-0 focus:ring-4 focus:ring-gray-100 bg-white p-3" type="button">
-                    <span class="sr-only">Open user menu</span>
-                    <img class="w-8 h-8 me-2 rounded-full" src={userIcon} alt="user photo" />
-                    Bonnie Green
-                    <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                    </svg>
-                </button>
-
-                <div id="dropdownAvatarName" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-                    <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                    <div class="font-medium ">Pro User</div>
-                    <div class="truncate">name@flowbite.com</div>
+                    {/* Dropdown Avatar Menu */}
+                    <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full md:me-0 focus:ring-4 focus:ring-gray-100 bg-white p-3" type="button">
+                        <span class="sr-only">Open user menu</span>
+                        <img class="w-8 h-8 me-2 rounded-full" src={userIcon} alt="user photo" />
+                        {userName}
+                        <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </button>
+                    <div id="dropdownAvatarName" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+                        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                        <div>{email}</div>
+                        </div>
+                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+                        </li>
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+                        </li>
+                        </ul>
+                        <div class="py-2">
+                        <a onClick = {handleLogout} href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+                        </div>
                     </div>
-                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
-                    <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
-                    </li>
-                    <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                    </li>
-                    <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
-                    </li>
-                    </ul>
-                    <div class="py-2">
-                    <a onClick = {handleLogout} href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
-                    </div>
-                </div>
 
                 </div>
             </div>
 
+            {/* Main Content */}
             <div className = "flex ml-5 mb-5">
+
                 {/* Searchbar and itemCards*/}
                 <div className = "flex flex-col w-3/5 mr-5">
+
+                    {/* Search bar */}
                     <form className="max-w-full">   
                         <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                         <div className="relative">
@@ -210,9 +299,11 @@ function Cashier () {
                             <button type="submit" className="text-white absolute end-2.5 bottom-2.5 bg-emerald-700 hover:bg-emerald-900 focus:ring-4 focus:outline-none focus:ring-emerald-50 font-medium rounded-full text-sm px-4 py-2">⎆</button>
                         </div>
                     </form>
+                    {/* Category Cards */}
                     <div className = "flex overflow-auto">
                         <Categories status="Available" 
                         categoryName = "All"
+                        
                         onClick = {() => {
                             setSelectedCategory(null);
                           }}
@@ -256,7 +347,7 @@ function Cashier () {
                         </Categories>
                     </div>
 
-
+                    {/* Item Cards filtered based on selected category */}
                     <div className = "grid grid-cols-3 gap-3">
                         {filteredItems.map((item, index) => (
                             <ItemCard 
@@ -426,21 +517,6 @@ function Cashier () {
                                 ${(calculateTotal() + calculateTotal()*0.05).toFixed(2)}
                             </p>
                         </div>
-                        {/* <div
-                            {...swipeHandlers}
-                            className="relative mt-4 p-4 text-white text-center rounded-lg cursor-pointer select-none"
-                            style={{ backgroundColor: buttonColor }} // Apply dynamic background color
-                        >
-                            <div
-                                className="absolute top-1/2 transform -translate-y-1/2"
-                                style={{
-                                    left: `${swipeProgressRef.current}%`, // Use ref for immediate updates
-                                }}
-                            >
-                                ➡️ 
-                            </div>
-                            Swipe Right to Place Order
-                        </div> */}
                         <SwipeableOrderButton setOrderList={setOrderList} clearUserName = {clearUserName}>
 
                         </SwipeableOrderButton>

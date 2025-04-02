@@ -1,37 +1,52 @@
 import './Modal.css';
 import {useState} from 'react';
 
+/**
+ * 
+ * @param  itemName - The name of the item
+ * @param  itemPrice - The price of the item
+ * @param  img - The image of the item 
+ * @param  onClose - The function to close the modal
+ * @param  addToOrder - The function to add the item to the order
+ *  
+ * @returns {JSX.Element} - The modal toppings selection component
+ * 
+ * @author Seshadithya Saravanan
+ */
+
 function Modal({itemName, itemPrice, img, onClose, addToOrder}) {
+
+    // State to track the selected toppings
     const [toppingsList, setToppingsList] = useState([]);
+    //TODO: Change the function names to be relevant to the project
+    const handleCheckboxChange = (topping) => {
+        setToppingsList((prevSelected) => {
+            if (prevSelected.includes(topping)) {
+                // Remove the topping if it is already selected
+                return prevSelected.filter((item) => item !== topping);
+            } else {
+                // Add the topping if it is not already selected
+                return [...prevSelected, topping];
+            }
+        });
+    };
 
-        const handleCheckboxChange = (topping) => {
-            setToppingsList((prevSelected) => {
-                if (prevSelected.includes(topping)) {
-                    // Remove the topping if it is already selected
-                    return prevSelected.filter((item) => item !== topping);
-                } else {
-                    // Add the topping if it is not already selected
-                    return [...prevSelected, topping];
-                }
-            });
-        };
-
-
-    const [selectedIceLevel, setSelectedIceLevel] = useState(""); // State for selected radio button
-
+    // State to track selected ice level
+    //TODO: Change the function names to be relevant to the project
+    const [selectedIceLevel, setSelectedIceLevel] = useState(""); 
     const handleRadioChange2 = (event) => {
         setSelectedIceLevel(event.target.value);
-            // Update the selected tea type
     };
 
     
-
-    const [selectedSugarLevel, setSelectedSugarLevel] = useState(""); // State for selected radio button
-
+    // State to track selected sugar level
+    //TODO: Change the function names to be relevant to the project
+    const [selectedSugarLevel, setSelectedSugarLevel] = useState(""); 
     const handleRadioChange3 = (event) => {
         setSelectedSugarLevel(event.target.value);
-            // Update the selected tea type
     };
+
+
         return (
             <>
                 <div id="static-modal" data-modal-backdrop="static" tabIndex="-1" aria-hidden="true" className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -214,7 +229,7 @@ function Modal({itemName, itemPrice, img, onClose, addToOrder}) {
     </ul>
                             </div>
 
-
+                            {/* Footer with add to order and cancel buttons */}
                             <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                             <button onClick={() => {addToOrder(itemName, itemPrice, img, toppingsList, selectedIceLevel, selectedSugarLevel);
                                 onClose();

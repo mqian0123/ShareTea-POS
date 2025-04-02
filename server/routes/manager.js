@@ -271,7 +271,23 @@ router.get('/inventory/:id', async (req, res) => {
 
 // API CALLS FOR REPORTS
 
+//credit get
+router.get('/credit', async (req, res) => {
+    try {
+        const numCardResult = await pool.query("SELECT COUNT(*) AS count FROM orders WHERE payment_method = 'card'");
+        const totalResult = await pool.query('SELECT COUNT(*) AS count FROM orders');
 
+        const numCard = parseInt(numCardResult.rows[0].count, 10);
+        const total = parseInt(totalResult.rows[0].count, 10);
+        
+        const ratio = total !== 0 ? numCard / total : 0; // Avoid division by zero
+
+        res.json({ratio});
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 
 
