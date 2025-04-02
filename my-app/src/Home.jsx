@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
  *
  * @component
  * @returns {JSX.Element} The rendered Home page with navigation buttons.
+ * @author Luke Gutierrez
  */
 function Home() {
     // Hook to programmatically navigate between routes

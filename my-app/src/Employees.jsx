@@ -4,30 +4,57 @@ import { useNavigate } from 'react-router-dom';
 import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 
+/**
+ * 
+ * @description Creates the employees page for the manager GUI
+ * @returns {JSX.Element} 
+ * 
+ * @author Luke GUtierrez
+ */
 
 function Employees() {
     const navigate = useNavigate();
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
+    //List of current employees
+    //TODO: Fetch from backend
     const [employees, setEmployees] = useState([
         { name: 'Meow', employee_id: 1, role: 'Cashier', phone_number: '123-456-7890', email: 'cashier1@example.com', password: '******' },
         { name: 'Yahia', employee_id: 2, role: 'Manager', phone_number: '234-567-8901', email: 'manager@example.com', password: '******' },
         { name: 'luke', employee_id: 3, role: 'Barista', phone_number: '345-678-9012', email: 'barista@example.com', password: '******' }
     ]);
 
-    const handleDelete = (id) => {
-        setEmployees(employees.filter(emp => emp.employee_id !== id));
+    //handler for the delete button that confirms the delete action
+    const handleDeleteClick = (id) => {
+        setPendingDeleteId(id);
+        setShowConfirm(true);
+    };
+    
+    const confirmDelete = () => {
+        setMenuItem(menuItem.filter(item => item.menu_id !== pendingDeleteId));
+        setShowConfirm(false);
+        setPendingDeleteId(null);
+    };
+    
+    const cancelDelete = () => {
+        setShowConfirm(false);
+        setPendingDeleteId(null);
     };
 
+    //handler for the edit button that opens the edit modal
     const handleEdit = (id) => {
         // TODO: Implement edit logic or modal popup
         console.log("Edit employee", id);
     };
 
+    //handler for the add button that opens the add modal
     const handleAdd = () => {
         // TODO: Navigate to Add Employee form or open modal
         console.log("Add new employee");
     };
 
+    //list of nav items for the the navigation bar
     const navItems = [
         { name: 'Dashboard', icon: <Home size={25} />, path: '/manager/dashboard'},
         { name: 'Employees', icon: <User size={25} />, path: '/manager/employees' , active: true },
@@ -37,7 +64,7 @@ function Employees() {
     ];
 
     
-
+    //function to render each section of the navigation bar
     const renderSection = (items) => (
         <>
             {items.map(item => (
@@ -56,7 +83,9 @@ function Employees() {
     );
 
     return (
+
         <div className="flex h-screen">
+            {/* Navigation bar */}
             <div className="w-64  border-r shadow-sm p-5">
                 <div className="flex items-center mb-8">
                     <img className = "hover:cursor-pointer max-h-28" src={logo} onClick={() => navigate("/")}/>
@@ -74,6 +103,7 @@ function Employees() {
                     </div>
                 </div>
 
+                {/* List of employees */}
                 <div className="space-y-4">
                     {employees.map(emp => (
                         <div key={emp.employee_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border">
@@ -85,14 +115,15 @@ function Employees() {
                                 <button onClick={() => handleEdit(emp.employee_id)} className="text-blue-600 hover:text-blue-800">
                                     <SquarePen size={20} />
                                 </button>
-                                <button onClick={() => handleDelete(emp.employee_id)} className="text-red-600 hover:text-red-800">
+                                <button onClick={() => handleDeleteClick(emp.employee_id)} className="text-red-600 hover:text-red-800">
                                     <Trash2 size={20} />
                                 </button>
                             </div>
                         </div>
                     ))}
                 </div>
-
+                
+                {/* Add new employee button */}
                 <div className="mt-10 flex justify-center">
                     <button 
                         onClick={handleAdd} 
@@ -103,6 +134,30 @@ function Employees() {
                     </button>
                 </div>
             </div>
+
+            {/* Confirmation modal for delete action */}
+            {showConfirm && (
+            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
+                <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+                    <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
+                    <p className="text-gray-700 mb-6">Are you sure you want to delete this menu item?</p>
+                    <div className="flex justify-end gap-4">
+                        <button 
+                            onClick={cancelDelete}
+                            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg text-gray-800"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            onClick={confirmDelete}
+                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
         </div>
     );
 }
