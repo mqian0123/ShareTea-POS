@@ -34,7 +34,7 @@ function Manager() {
 
     const navItems = [
         { name: 'Dashboard', icon: <Home size={25} />, path: '/manager/dashboard', active: true },
-        { name: 'Employees', icon: <User size={25} />, path: '/manager/employee' },
+        { name: 'Employees', icon: <User size={25} />, path: '/manager/employees' },
         { name: 'Menu Items', icon: <SquarePen size={25} />, path: '/manager/menu' },
         { name: 'Inventory', icon: <ChefHat  size={25} />,  path: '/manager/inventory'},
         { name: 'Reports', icon: <ClipboardList size={25} />, path: '/manager/reports' }
