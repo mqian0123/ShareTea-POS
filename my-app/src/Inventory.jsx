@@ -9,8 +9,8 @@ function Inventory() {
     const navigate = useNavigate();
 
     const [inventoryItem, setInventoryItem] = useState([
-        { name: 'special sauce', inventory_id: 1, quantity: 'Milk Tea'},
-        { name: 'Ice', inventory_id: 1, quantity: 'Fruit Tea' },
+        { name: 'special sauce', inventory_id: 1, quantity: 100},
+        { name: 'Ice', inventory_id: 1, quantity: 1204 },
     ]);
 
     const handleDelete = (id) => {
