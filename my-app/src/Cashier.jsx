@@ -140,7 +140,7 @@ function Cashier () {
     // State hook for customer name so that it can be cleared after the order is placed
     const [customerName, setCustomerName] = useState(() => {
         const savedCustomerName = getCookie('customerName');
-        return savedCustomerName || 'Guest';
+        return savedCustomerName || '';
     });
 
     const [phoneNumber, setPhoneNumber] = useState(() => {
@@ -692,7 +692,7 @@ function Cashier () {
                                 ${(calculateTotal() + calculateTotal()*0.05).toFixed(2)}
                             </p>
                         </div>
-                        <SwipeableOrderButton setOrderList={setOrderList} clearUserName = {clearUserName}>
+                        <SwipeableOrderButton setOrderList={setOrderList} clearUserName = {clearUserName} setSelectedTable = {setSelectedTable} setPhoneNumber = {setPhoneNumber}>
 
                         </SwipeableOrderButton>
                     </div>
