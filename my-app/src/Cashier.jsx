@@ -32,13 +32,48 @@ import mangoMojito from './assets/Mango+Mojito.jpg'
 import strawberryMojito from './assets/Strawberry+Mojito.jpg'
 import limeMojito from './assets/Lime+Mojito.jpg'
 import wintermelonCreama from './assets/Wintermelon+Creama.jpg'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google'
 import axios from 'axios';
 import SwipeableOrderButton from './SwipeableOrderButton.jsx'
 import { useLocation } from 'react-router-dom';
+import Weather from './Weather.jsx';
 
+
+/**
+ * 
+ * @param {String} name 
+ * @param {String} value 
+ * @param {Number} days
+ */
+const setCookie = (name, value, days = 7) => {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (JSON.stringify(value) || "") + expires + "; path=/";
+};
+
+const getCookie = (name) => {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) {
+            const value = c.substring(nameEQ.length, c.length);
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                return value;
+            }
+        }
+    }
+    return null;
+};
 
 const apiCall = () => {
     const data = {
@@ -83,14 +118,43 @@ function Cashier () {
     // State hooks to store the selected category, search term, and order list
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [orderList, setOrderList] = useState([]);
+    const [orderList, setOrderList] = useState(() => {
+        // Initialize from cookie if it exists, otherwise empty array
+        const savedOrderList = getCookie('orderList');
+        return savedOrderList || [];
+    });
 
     // State hooks for the order types
-    const [activeButton, setActiveButton] = useState(0);
+    const [activeButton, setActiveButton] = useState(() => {
+        const savedActiveButton = getCookie('activeButton');
+        return savedActiveButton || 0;
+    });
+
+    // useEffect (() => {
+    //     const storedButton = localStorage.getItem('storedOrderType');
+    //     if (storedButton) {
+    //         setActiveButton(JSON.parse(storedButton));
+    //     }
+    // }, [])
 
     // State hook for customer name so that it can be cleared after the order is placed
-    const [customerName, setCustomerName] = useState("");
+    const [customerName, setCustomerName] = useState(() => {
+        const savedCustomerName = getCookie('customerName');
+        return savedCustomerName || 'Guest';
+    });
 
+    const [phoneNumber, setPhoneNumber] = useState(() => {
+        const savedPhoneNumber = getCookie('phoneNumber');
+        return savedPhoneNumber || 'xxx-xxx-xxxx'
+    });
+
+    const [selectedTable, setSelectedTable] = useState(() => {
+        const savedTable = getCookie('selectedTable');
+        return savedTable || 'Choose a Table';
+    });
+
+    // State hook for the current order type
+    // const [currentOrderType, setOrderType] = useState("");
     // Menu items
     const menuItems = [
         { name: "Wintermelon Lemonade", price: 7.00, img: wintermelonLemonade, isSpecial: false, categoryName: "Fruit Tea" },
@@ -187,6 +251,19 @@ function Cashier () {
                                                             : item));         
     }
     
+
+    /**
+     * 
+     * @param {Number} index 
+     * @description Removes the item at index from the current order list
+     * @returns {Void}
+     * 
+     * @author Seshadithya Saravanan
+     */
+    const deleteItem = (index) => {
+        setOrderList(orderList.filter((_, i) => i!==index))
+    }
+
     /**
      * @description Calculate the total price of all the items in the order list
      * @returns {Number} sum - The total price of all the items in the order list
@@ -223,6 +300,36 @@ function Cashier () {
         navigate('/');
     }
 
+    /**
+     * @description Saves the customer name, orderList, activeButton, phoneNumber, and selectedTable to cookie storage upon change
+     * @returns {Void}
+     * 
+     * @author Seshadithya Saravanan
+     */
+
+    useEffect(() => {
+        setCookie("customerName", customerName);
+    }, [customerName]);
+
+    // Add this useEffect to save to cookie whenever orderList changes
+    useEffect(() => {
+        setCookie("orderList", orderList);
+    }, [orderList]);
+
+    useEffect(() => {
+        setCookie("activeButton", activeButton);
+    }, [activeButton])
+
+    useEffect(() => {
+        setCookie("phoneNumber", phoneNumber);
+    }, [phoneNumber])
+
+    useEffect(() => {
+        setCookie("selectedTable", selectedTable);
+    }, [selectedTable])
+
+
+
     return (
         <div className = "flex flex-col ">
 
@@ -235,6 +342,8 @@ function Cashier () {
                         {date1}
                     </p>
                 </div>
+                <Weather>
+                </Weather>
                 <div className = "flex items-center">
                     <p className = "p-5 font-sans">
                         Total: 20 Orders
@@ -243,31 +352,31 @@ function Cashier () {
                         Report 📜
                     </button>
                     {/* Dropdown Avatar Menu */}
-                    <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full md:me-0 focus:ring-4 focus:ring-gray-100 bg-white p-3" type="button">
-                        <span class="sr-only">Open user menu</span>
-                        <img class="w-8 h-8 me-2 rounded-full" src={userIcon} alt="user photo" />
+                    <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" className="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full md:me-0 focus:ring-4 focus:ring-gray-100 bg-white p-3" type="button">
+                        <span className="sr-only">Open user menu</span>
+                        <img className="w-8 h-8 me-2 rounded-full" src={userIcon} alt="user photo" />
                         {userName}
-                        <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                        <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
                         </svg>
                     </button>
-                    <div id="dropdownAvatarName" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-                        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                    <div id="dropdownAvatarName" className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+                        <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                         <div>{email}</div>
                         </div>
-                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
+                        <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
                         </li>
                         </ul>
-                        <div class="py-2">
-                        <a onClick = {handleLogout} href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+                        <div className="py-2">
+                        <a onClick = {handleLogout} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
                         </div>
                     </div>
 
@@ -389,7 +498,10 @@ function Cashier () {
                             {orderType.map((button) => (
                                 <button
                                     key={button.id}
-                                    onClick={() => setActiveButton(button.id)}
+                                    onClick={() => {
+                                        setActiveButton(button.id);
+                                    }
+                                    }
                                     className={`rounded-full cursor-pointer py-5 ${
                                         activeButton === button.id 
                                         ? 'bg-emerald-900 text-white transition-colors ease-in' 
@@ -405,25 +517,82 @@ function Cashier () {
                     {/* Customer information and table information */}
                     <div className='flex flex-col m-5'>
                         <div className='grid grid-cols-2'>
-                            <p className='text-gray-500'>
-                                Customer name
-                            </p>
-                            <p className='text-gray-500'>
-                                Table
-                            </p>
+                            
+                                 
+                                <p className='text-gray-500'>
+                                    
+                                    Customer name
+                                </p>
+                            
+                            {
+                                activeButton === 1 &&
+                                <p className='text-gray-500'>
+                                    Table
+                                </p>
+                            }
+                            {
+                                activeButton === 3 &&
+                                <p className='text-gray-500'>
+                                    Phone Number
+                                </p>
+                            }
+                            {
+                                activeButton === 2 &&
+                                <p className='text-gray-500'>
+                                Phone Number
+                             </p>
+                            }
                         </div>
                         <div className='grid grid-cols-2 gap-5'>
                             <input type="text" 
                             value={customerName} // Bind input value to state
-                            onChange={(e) => setCustomerName(e.target.value)}
+                            onChange={(e) => {setCustomerName(e.target.value)
+                            }}
                             className="border py-5 border-emerald-900 rounded-full" placeholder="John" required />
-                            <select className="border border-emerald-900 rounded-full">
-                                <option selected>Choose a Table</option>
-                                <option value="US">A1 - indoor</option>
-                                <option value="CA">A2 - outdoor</option>
-                                <option value="FR">A3 - rooftop</option>
-                                <option value="DE">A4 - underground</option>
-                            </select>
+                            {
+                                activeButton === 1 &&
+                                <select 
+                                    className="border border-emerald-900 rounded-full"
+                                    value={selectedTable}
+                                    onChange={(e) => setSelectedTable(e.target.value)}
+                                >
+                                    <option value="Choose a Table">Choose a Table</option>
+                                    <option value="A1 - indoor">A1 - indoor</option>
+                                    <option value="A2 - outdoor">A2 - outdoor</option>
+                                    <option value="A3 - rooftop">A3 - rooftop</option>
+                                    <option value="A4 - underground">A4 - underground</option>
+                                </select>
+                            }
+                            {
+                                activeButton === 2 &&
+                                <form class="max-w-xs mx-auto">
+                                    <div class="relative">
+                                        <span class="absolute start-0 bottom-3 text-gray-500">
+                                            <svg class="w-4 h-4 rtl:rotate-[270deg]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 19 18">
+                                                <path d="M18 13.446a3.02 3.02 0 0 0-.946-1.985l-1.4-1.4a3.054 3.054 0 0 0-4.218 0l-.7.7a.983.983 0 0 1-1.39 0l-2.1-2.1a.983.983 0 0 1 0-1.389l.7-.7a2.98 2.98 0 0 0 0-4.217l-1.4-1.4a2.824 2.824 0 0 0-4.218 0c-3.619 3.619-3 8.229 1.752 12.979C6.785 16.639 9.45 18 11.912 18a7.175 7.175 0 0 0 5.139-2.325A2.9 2.9 0 0 0 18 13.446Z"/>
+                                            </svg>
+                                        </span>
+                                        <input type="text" id="floating-phone-number" class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder=" " value={phoneNumber} onChange={(e) => {setPhoneNumber(e.target.value)}}/>
+                                        <label for="floating-phone-number" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Phone number</label>
+                                    </div>
+                                </form>
+
+                            }
+                            {
+                                activeButton === 3 && 
+                                <form class="max-w-xs mx-auto">
+                                <div class="relative">
+                                    <span class="absolute start-0 bottom-3 text-gray-500">
+                                        <svg class="w-4 h-4 rtl:rotate-[270deg]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 19 18">
+                                            <path d="M18 13.446a3.02 3.02 0 0 0-.946-1.985l-1.4-1.4a3.054 3.054 0 0 0-4.218 0l-.7.7a.983.983 0 0 1-1.39 0l-2.1-2.1a.983.983 0 0 1 0-1.389l.7-.7a2.98 2.98 0 0 0 0-4.217l-1.4-1.4a2.824 2.824 0 0 0-4.218 0c-3.619 3.619-3 8.229 1.752 12.979C6.785 16.639 9.45 18 11.912 18a7.175 7.175 0 0 0 5.139-2.325A2.9 2.9 0 0 0 18 13.446Z"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" id="floating-phone-number" class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder=" " value={phoneNumber} onChange={(e) => {setPhoneNumber(e.target.value)}}/>
+                                    <label for="floating-phone-number" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:start-6 peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Phone number</label>
+                                </div>
+                                </form>
+                            }
+                            
                         </div>
                     </div>
 
@@ -434,8 +603,8 @@ function Cashier () {
                         </p>
                         <div className="h-100 overflow-y-auto border border-emerald-900 rounded-3xl p-5 my-5">
                             { 
-                                (orderList.map((item) => (
-                                    <div className='flex p-3 rounded-3xl border border-emerald-900 mb-5 justify-between'> 
+                                (orderList.map((item, index) => (
+                                    <div key = {index} className='flex p-3 rounded-3xl border border-emerald-900 mb-5 justify-between'> 
                                         <div>
                                             <img className = 'h-20 rounded mr-5' src={item.img}>
                                             </img>
@@ -482,6 +651,12 @@ function Cashier () {
                                                         </button>
                                                     </div>
                                                 </form>
+
+                                                {/* Delete Button to remove item from cart */}
+                                                <button onClick={() => deleteItem(index)} type="button" className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 ">
+                                                    Delete
+                                                </button>
+
                                             </div>
                                     </div>
                                     
