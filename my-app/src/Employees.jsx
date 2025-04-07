@@ -18,6 +18,22 @@ function Employees() {
     const [showConfirm, setShowConfirm] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [newEmployee, setNewEmployee] = useState({
+        name: '',
+        role: '',
+        phone_number: '',
+        email: ''
+    });
+
+    
+
+
+
     //List of current employees
     //TODO: Fetch from backend
     //  completed by yahia 
@@ -66,15 +82,65 @@ function Employees() {
 
     //handler for the edit button that opens the edit modal
     const handleEdit = (id) => {
-        // TODO: Implement edit logic or modal popup
-        console.log("Edit employee", id);
+        const employee = employees.find(emp => emp.employee_id === id);
+        setSelectedEmployee(employee);
+        setShowEditModal(true);
     };
+    
+    const saveEditedEmployee = async (updatedEmployee) => {
+        try {
+            const response = await axios.patch("http://localhost:10000/manager/employees/" + updatedEmployee.employee_id, {
+                name: updatedEmployee.name,
+                role: updatedEmployee.role,
+                phone_number: updatedEmployee.phone_number,
+                email: updatedEmployee.email
+            });
+    
+            const updatedData = response.data;
+    
+            // Update local state
+            setEmployees(prev =>
+                prev.map(emp =>
+                    emp.employee_id === updatedData.employee_id ? updatedData : emp
+                )
+            );
+    
+            setShowEditModal(false);
+        } catch (error) {
+            console.error('Failed to update employee:', error);
+        }
+    };
+    
 
     //handler for the add button that opens the add modal
     const handleAdd = () => {
-        // TODO: Navigate to Add Employee form or open modal
-        console.log("Add new employee");
+        setNewEmployee({ name: '', role: '', phone_number: '', email: '' });
+        setShowAddModal(true);
     };
+
+
+    const saveNewEmployee = async () => {
+        try {
+            const response = await axios.post('http://localhost:10000/manager/employees', {
+                name: newEmployee.name,
+                role: newEmployee.role,
+                phone_number: newEmployee.phone_number,
+                email: newEmployee.email
+            });
+    
+            const created = response.data;
+    
+            // Add new employee to state
+            setEmployees(prev => [...prev, created]);
+    
+            setShowAddModal(false);
+        } catch (error) {
+            console.error('Failed to add employee:', error);
+            // Optionally show a toast or user-friendly message
+        }
+    };
+    
+    
 
     //list of nav items for the the navigation bar
     const navItems = [
@@ -180,6 +246,130 @@ function Employees() {
                 </div>
             </div>
         )}
+
+            {showEditModal && selectedEmployee && (
+            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
+                <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+                    <h2 className="text-lg font-semibold mb-4">Edit Employee</h2>
+
+                    <div className="space-y-4">
+                        <input
+                            type="text"
+                            value={selectedEmployee.name}
+                            onChange={(e) =>
+                                setSelectedEmployee({ ...selectedEmployee, name: e.target.value })
+                            }
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Name"
+                        />
+                        <input
+                            type="text"
+                            value={selectedEmployee.role}
+                            onChange={(e) =>
+                                setSelectedEmployee({ ...selectedEmployee, role: e.target.value })
+                            }
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Role"
+                        />
+                        <input
+                            type="text"
+                            value={selectedEmployee.phone_number}
+                            onChange={(e) =>
+                                setSelectedEmployee({ ...selectedEmployee, phone_number: e.target.value })
+                            }
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Phone Number"
+                        />
+                        <input
+                            type="email"
+                            value={selectedEmployee.email}
+                            onChange={(e) =>
+                                setSelectedEmployee({ ...selectedEmployee, email: e.target.value })
+                            }
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Email"
+                        />
+                    </div>
+
+                    <div className="flex justify-end gap-4 mt-6">
+                        <button
+                            onClick={() => setShowEditModal(false)}
+                            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg text-gray-800"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={() => {
+                                saveEditedEmployee(selectedEmployee);
+                                setShowEditModal(false);
+                            }}
+                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                        >
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+
+            {showAddModal && (
+            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
+                <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+                    <h2 className="text-lg font-semibold mb-4">Add New Employee</h2>
+
+                    <div className="space-y-4">
+                        <input
+                            type="text"
+                            value={newEmployee.name}
+                            onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Name"
+                        />
+                        <input
+                            type="text"
+                            value={newEmployee.role}
+                            onChange={(e) => setNewEmployee({ ...newEmployee, role: e.target.value })}
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Role"
+                        />
+                        <input
+                            type="text"
+                            value={newEmployee.phone_number}
+                            onChange={(e) => setNewEmployee({ ...newEmployee, phone_number: e.target.value })}
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Phone Number"
+                        />
+                        <input
+                            type="email"
+                            value={newEmployee.email}
+                            onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
+                            className="w-full border rounded px-3 py-2"
+                            placeholder="Email"
+                        />
+                    </div>
+
+                    <div className="flex justify-end gap-4 mt-6">
+                        <button
+                            onClick={() => setShowAddModal(false)}
+                            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg text-gray-800"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={saveNewEmployee}
+                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                        >
+                            Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+
+
+
+
+
         </div>
     );
 }
