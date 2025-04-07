@@ -46,10 +46,17 @@ function Employees() {
         setShowConfirm(true);
     };
     
-    const confirmDelete = () => {
-        setMenuItem(menuItem.filter(item => item.menu_id !== pendingDeleteId));
+    const confirmDelete = async () => {
+        
+        try {
+            await axios.delete('http://localhost:10000/manager/employees/' + pendingDeleteId);
+            setEmployees(prev => prev.filter(emp => emp.employee_id !== pendingDeleteId));
+        } catch (error) {
+            console.error("Failed to delete employee:", error);
+        } finally {        
+        
         setShowConfirm(false);
-        setPendingDeleteId(null);
+        setPendingDeleteId(null);}
     };
     
     const cancelDelete = () => {

@@ -42,11 +42,19 @@ function Inventory() {
         setPendingDeleteId(id);
         setShowConfirm(true);
     };
-    
-    const confirmDelete = () => {
-        setMenuItem(menuItem.filter(item => item.menu_id !== pendingDeleteId));
+
+
+    const confirmDelete = async () => {
+        
+        try {
+            await axios.delete('http://localhost:10000/manager/inventory/' + pendingDeleteId);
+            setMenuItem(inventoryItem.filter(item => item.inventory_id !== pendingDeleteId));
+        } catch (error) {
+            console.error("Failed to delete inventory item:", error);
+        } finally {        
+        
         setShowConfirm(false);
-        setPendingDeleteId(null);
+        setPendingDeleteId(null);}
     };
     
     const cancelDelete = () => {
