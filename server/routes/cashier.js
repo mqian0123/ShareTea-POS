@@ -62,19 +62,31 @@ router.post('/addOrder', async (req, res) => {
 
         // get current orderID
         const result = await pool.query(
-          '"SELECT MAX(order_id) FROM orders'
+          'SELECT MAX(order_id) FROM orders'
         );
         orderID = result.rows[0]['max'] + 1 // current order ID = max orderID + 1
 
-        // initial insert into order table
+        // console.log("orderID: " + orderID);
+        // console.log("orderList length: " + orderList.length)
+        // console.log("name: " + orderList[0]['name'])
+        // console.log("price: " + orderList[0]['price'])
+        // console.log("toppings?: " + orderList[0]['toppings'])
+
         await pool.query(
             'INSERT INTO orders (time_stamp, payment_method, reward_points_earned, total_cost, customer_id, employee_id) VALUES ($1::TIMESTAMP, $2, $3, $4, $5, $6)',
             [time, payment, points, cost, customerID, employeeID]
         );
 
+        ///// VERIFIED UP TO HERE ////
+
         // Parse through orderList, each element is a menu item
         for (let i=0; i < orderList.length; i++) {
             const menuID = orderList[i]['menuID']
+            
+            
+            // ISSUE 1: orderList does not contain menuID
+            console.log("menuID: " + menuID)
+
             // update JUNCT_order_items
             await pool.query(
                 'INSERT INTO JUNCT_order_items (order_id, menu_id) VALUES ($1, $2)',
@@ -85,7 +97,8 @@ router.post('/addOrder', async (req, res) => {
             let toppingsList = orderList[i]['toppings']
             for(let j=0; j < toppingsList.length; j++) {
               // updates total_times_ordered
-              const name = toppingList[j]
+              const name = toppingsList[j]
+              // console.log("topping name : " + name)
               await pool.query(
                 'UPDATE toppings SET total_times_ordered = total_times_ordered + 1 WHERE name = $1',
                 [name]
@@ -104,6 +117,8 @@ router.post('/addOrder', async (req, res) => {
                 [amountUsed, name]
               );
             }
+
+            // VERIFIED UP TO HERE
 
             // TODO: Deal with ice and sugar
 
