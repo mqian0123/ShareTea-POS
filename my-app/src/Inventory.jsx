@@ -2,7 +2,8 @@ import './Manager.css';
 import logo from './assets/Share Tea.png';
 import { useNavigate } from 'react-router-dom';
 import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, PackagePlus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 /**
  * 
@@ -18,11 +19,23 @@ function Inventory() {
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     //List of inventory items
-    //TODO: Fetch from backend
-    const [inventoryItem, setInventoryItem] = useState([
-        { name: 'special sauce', inventory_id: 1, quantity: 100},
-        { name: 'Ice', inventory_id: 2, quantity: 1204 },
-    ]);
+    //TODO: Fetch from backen
+    //  completed by yahia
+    //  TODO: change local host to actual server URL
+    const [inventoryItem, setInventoryItem] = useState([]);
+    
+    useEffect(() => {
+        const fetchInventoryItems = async () => {
+            try {
+                const response = await axios.get('http://localhost:10000/manager/inventory');
+                setInventoryItem(response.data);
+            } catch (error) {
+                console.error('Error fetching inventory items:', error);
+                setInventoryItem([]);  // Set empty data if there's an error
+            }
+        };
+        fetchInventoryItems();
+    }, []);
 
     //handler for the delete button that confirms the delete action
     const handleDeleteClick = (id) => {

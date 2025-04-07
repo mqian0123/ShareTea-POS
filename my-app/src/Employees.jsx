@@ -2,7 +2,8 @@ import './Manager.css';
 import logo from './assets/Share Tea.png';
 import { useNavigate } from 'react-router-dom';
 import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, UserPlus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 /**
  * 
@@ -19,11 +20,25 @@ function Employees() {
 
     //List of current employees
     //TODO: Fetch from backend
-    const [employees, setEmployees] = useState([
-        { name: 'Meow', employee_id: 1, role: 'Cashier', phone_number: '123-456-7890', email: 'cashier1@example.com', password: '******' },
-        { name: 'Yahia', employee_id: 2, role: 'Manager', phone_number: '234-567-8901', email: 'manager@example.com', password: '******' },
-        { name: 'luke', employee_id: 3, role: 'Barista', phone_number: '345-678-9012', email: 'barista@example.com', password: '******' }
-    ]);
+    //  completed by yahia 
+    //  TODO: change local host to actual server URL
+    const [employees, setEmployees] = useState([]);
+    
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            try {
+                const response = await axios.get('http://localhost:10000/manager/employees');
+                setEmployees(response.data);
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+                setEmployees([]);  // Set empty data if there's an error
+            }
+        };
+        fetchEmployees();
+    }, []);
+
+
+
 
     //handler for the delete button that confirms the delete action
     const handleDeleteClick = (id) => {
