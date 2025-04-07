@@ -2,8 +2,8 @@ import './Manager.css';
 import logo from './assets/Share Tea.png';
 import { useNavigate } from 'react-router-dom';
 import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, Plus } from 'lucide-react';
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function MenuItems() {
     const navigate = useNavigate();
@@ -12,10 +12,21 @@ function MenuItems() {
 
     //List of menu items
     //TODO: Fetch from backend
-    const [menuItem, setMenuItem] = useState([
-        { name: 'Meow', menu_id: 1, category: 'Milk Tea', price: '$7', total_purchases: '235235' },
-        { name: 'Pearl Tea', menu_id: 3, category: 'Fruit Tea', price: '$6.50', total_purchases: '12' },
-    ]);
+    const [menuItem, setMenuItem] = useState([]);
+
+    useEffect(() => {
+        const fetchMenuItems = async () => {
+            try {
+                const response = await axios.get('http://localhost:10000/manager/menu');
+                setMenuItem(response.data);
+            } catch (error) {
+                console.error('Error fetching menu items:', error);
+                setMenuItem([]);  // Set empty data if there's an error
+            }
+        };
+        fetchMenuItems();
+    }, []);
+
 
     //handler for the delete button that confirms the delete action
     const handleDeleteClick = (id) => {
