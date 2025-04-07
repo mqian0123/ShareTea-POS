@@ -43,7 +43,7 @@ router.patch('/employees/:id', async (req, res) => {
     const { name, role, phone_number, email } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE employees SET name = COALESCE($1, name), role = COALESCE($2, role), phone_number = COALESCE($3, phone_number), email = COALESCE($4, email) WHERE id = $5 RETURNING *',
+            'UPDATE employees SET name = COALESCE($1, name), role = COALESCE($2, role), phone_number = COALESCE($3, phone_number), email = COALESCE($4, email) WHERE employee_id = $5 RETURNING *',
             [name, role, phone_number, email, id]
         );
         if (result.rows.length === 0) {
@@ -62,7 +62,7 @@ router.delete('/employees/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            'DELETE FROM employees WHERE id = $1 RETURNING *',
+            'DELETE FROM employees WHERE employee_id = $1 RETURNING *',
             [id]
         );
         if (result.rows.length === 0) {
@@ -80,7 +80,7 @@ router.get('/employees/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            'SELECT * FROM employees WHERE id = $1',
+            'SELECT * FROM employees WHERE employee_id = $1',
             [id]
         );
         if (result.rows.length === 0) {
@@ -130,7 +130,7 @@ router.patch('/menu/:id', async (req, res) => {
     const { name, price, total_purchases, category } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE menu_items SET name = COALESCE($1, name), price = COALESCE($2, price), total_purchases = COALESCE($3, total_purchases), category = COALESCE($4, category) WHERE id = $5 RETURNING *',
+            'UPDATE menu_items SET name = COALESCE($1, name), price = COALESCE($2, price), total_purchases = COALESCE($3, total_purchases), category = COALESCE($4, category) WHERE menu_id = $5 RETURNING *',
             [name, price, total_purchases, category, id]
         );
         if (result.rows.length === 0) {
@@ -148,7 +148,7 @@ router.delete('/menu/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            'DELETE FROM menu_items WHERE id = $1 RETURNING *',
+            'DELETE FROM menu_items WHERE menu_id = $1 RETURNING *',
             [id]
         );
         if (result.rows.length === 0) {
@@ -166,7 +166,7 @@ router.get('/menu/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            'SELECT * FROM menu_items WHERE id = $1',
+            'SELECT * FROM menu_items WHERE menu_id = $1',
             [id]
         );
         if (result.rows.length === 0) {
@@ -215,7 +215,7 @@ router.patch('/inventory/:id', async (req, res) => {
     const { name, quantity} = req.body;
     try {
         const result = await pool.query(
-            'UPDATE inventory SET name = COALESCE($1, name), quantity = COALESCE($2, price) WHERE id = $3 RETURNING *',
+            'UPDATE inventory SET name = COALESCE($1, name), quantity = COALESCE($2, price) WHERE inventory_id = $3 RETURNING *',
             [name, quantity, id]
         );
         if (result.rows.length === 0) {
@@ -233,7 +233,7 @@ router.delete('/inventory/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            'DELETE FROM inventory WHERE id = $1 RETURNING *',
+            'DELETE FROM inventory WHERE inventory_id = $1 RETURNING *',
             [id]
         );
         if (result.rows.length === 0) {
@@ -251,7 +251,7 @@ router.get('/inventory/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            'SELECT * FROM inventory WHERE id = $1',
+            'SELECT * FROM inventory WHERE inventory_id = $1',
             [id]
         );
         if (result.rows.length === 0) {

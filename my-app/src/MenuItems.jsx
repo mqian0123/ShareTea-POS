@@ -33,11 +33,18 @@ function MenuItems() {
         setPendingDeleteId(id);
         setShowConfirm(true);
     };
-    
-    const confirmDelete = () => {
-        setMenuItem(menuItem.filter(item => item.menu_id !== pendingDeleteId));
+
+    const confirmDelete = async () => {
+        
+        try {
+            await axios.delete('http://localhost:10000/manager/menu/' + pendingDeleteId);
+            setMenuItem(menuItem.filter(item => item.menu_id !== pendingDeleteId));
+        } catch (error) {
+            console.error("Failed to delete menu item:", error);
+        } finally {        
+        
         setShowConfirm(false);
-        setPendingDeleteId(null);
+        setPendingDeleteId(null);}
     };
     
     const cancelDelete = () => {
