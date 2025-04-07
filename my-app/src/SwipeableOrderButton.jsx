@@ -78,7 +78,14 @@ function SwipeableOrderButton({ setOrderList, clearUserName }) {
      * Handles the logic for placing an order.
      * Clears the order list and username, and resets the button after a short delay.
      */
-    const placeOrder = () => {
+    const placeOrder = (data) => {
+            axios.post('http://localhost:10000/cashier/addOrder', data).then((data) => {
+            //this console.log will be in our frontend console
+          console.log(data)
+          })
+          .catch(error => {
+              console.log("error");
+          });
         console.log('Order placed successfully!');
         setOrderList([]);
         clearUserName('');
