@@ -8,7 +8,7 @@ import React, { useState, useRef, useEffect } from 'react';
  * @param {Function} clearUserName - A function to clear the username after the order is placed.
  * @author Garry Peter Thompson
  */
-function SwipeableOrderButton({ setOrderList, clearUserName }) {
+function SwipeableOrderButton({ setOrderList, clearUserName, setSelectedTable, setPhoneNumber}) {
     // State to track whether the button is being dragged
     const [isDragging, setIsDragging] = useState(false);
 
@@ -89,7 +89,8 @@ function SwipeableOrderButton({ setOrderList, clearUserName }) {
         console.log('Order placed successfully!');
         setOrderList([]);
         clearUserName('');
-
+        setSelectedTable('Choose a Table');
+        setPhoneNumber('xxx-xxx-xxxx')
         // Automatically reset the button after a short delay
         setTimeout(() => {
             setPosition(0);
