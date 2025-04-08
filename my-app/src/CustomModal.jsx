@@ -15,7 +15,7 @@ import { useState } from "react";
  */
 
 
-function CustomModal ( {itemName, itemPrice, img, onClose, addToOrder}) {
+function CustomModal ( {itemName, itemPrice, img, onClose, addToOrder, menuID}) {
 
         const [toppingsList, setToppingsList] = useState([]);
 

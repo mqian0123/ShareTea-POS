@@ -17,7 +17,7 @@ import CustomModal from "./CustomModal.jsx";
  * @author Seshadithya Saravanan
  */
 
-function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder}) {
+function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
 
     // State to track whether the modal for the toppings selection is open
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,7 +83,7 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder}) {
                         {   
                                 isSpecial ? (
                                     isModalOpen && (
-                                        <CustomModal itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder}>
+                                        <CustomModal itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID}>
                                         </CustomModal>
                                     )
                                     
@@ -91,7 +91,7 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder}) {
 
 
                                     isModalOpen && (
-                                            <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder}>
+                                            <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID}>
                                             </Modal>
                                     )
                                 )

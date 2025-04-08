@@ -14,7 +14,7 @@ import {useState} from 'react';
  * @author Seshadithya Saravanan
  */
 
-function Modal({itemName, itemPrice, img, onClose, addToOrder}) {
+function Modal({itemName, itemPrice, img, onClose, addToOrder, menuID}) {
 
     // State to track the selected toppings
     const [toppingsList, setToppingsList] = useState([]);

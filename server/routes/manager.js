@@ -179,6 +179,31 @@ router.get('/menu/:id', async (req, res) => {
     }
 });
 
+//TODO: VERIFY QUERY AND COMPLETE QUERY
+//TODO: ADD QUERY TO GET INVENTORY ID FROM INVENTORY NAMES
+router.post('/menu/ingredient_list/:id', async (req, res) => {
+    const { id } = req.params; // menu_id
+    const { inventory_ids } = req.body; // expecting an array of inventory_ids
+
+    if (!Array.isArray(inventory_ids) || inventory_ids.length === 0) {
+        return res.status(400).json({ error: 'inventory_ids must be a non-empty array' });
+    }
+
+    const values = inventory_ids.map((inv_id, i) => `($1, $${i + 2})`).join(', ');
+    const params = [id, ...inventory_ids];
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO menu_inventory (menu_id, inventory_id) VALUES ${values} RETURNING *`,
+            params
+        );
+        res.status(201).json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // API CALLS FOR INVENTORY
