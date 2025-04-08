@@ -209,7 +209,9 @@ function Cashier () {
      * 
      * @author Seshadithya Saravanan
     */
-    const addToOrder = (name, price, img, toppingsList, selectedTeaType, selectedIceLevel, selectedSugarLevel) => {
+    const addToOrder = (name, price, img, toppingsList, selectedTeaType, selectedIceLevel, selectedSugarLevel, menuID) => {
+        console.log("add to order function ", + name + " " + price + " " + menuID)
+        console.log(name)
         const newItem = {
             name: name,
             price: price,
@@ -219,7 +221,8 @@ function Cashier () {
             teaType: selectedTeaType,
             iceLevel: selectedIceLevel,
             sugarLevel: selectedSugarLevel,
-            total: price
+            total: price,
+            meunID: menuID
         };
         setOrderList([...orderList, newItem]);
     };
