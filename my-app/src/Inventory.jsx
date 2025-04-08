@@ -16,6 +16,16 @@ import axios from 'axios';
 function Inventory() {
     const navigate = useNavigate();
     const [showConfirm, setShowConfirm] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
+    const [showAdd, setShowAdd] = useState(false);
+
+    const [selectedInventoryItem, setSelectedInventoryItem] = useState(null);
+    const [editedInventoryQuantity, setEditedInventoryQuantity] = useState(null);
+
+    const [newItemName, setNewItemName] = useState('');
+    const [newItemQuantity, setNewItemQuantity] = useState('');
+
+
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     //List of inventory items
@@ -48,7 +58,7 @@ function Inventory() {
         
         try {
             await axios.delete('http://localhost:10000/manager/inventory/' + pendingDeleteId);
-            setMenuItem(inventoryItem.filter(item => item.inventory_id !== pendingDeleteId));
+            setInventoryItem(inventoryItem.filter(item => item.inventory_id !== pendingDeleteId));
         } catch (error) {
             console.error("Failed to delete inventory item:", error);
         } finally {        
@@ -64,14 +74,40 @@ function Inventory() {
 
     //handler for the edit button that opens the edit modal
     const handleEdit = (id) => {
-        // TODO: Implement edit logic or modal popup
-        console.log("Edit inventory item", id);
+        const item = inventoryItem.find(item => item.inventory_id === id);
+        setSelectedInventoryItem(item);
+        setEditedInventoryQuantity(item.quantity);
+        setShowEdit(true);
     };
 
     //handler for the add button that opens the add modal
     const handleAdd = () => {
-        // TODO: open modal
-        console.log("Add new inventory item");
+        setShowAdd(true);
+    };
+
+    // Handler for creating a new inventory item
+    const handleCreateNewItem = async () => {
+        // Validation of item quantity
+        const qty = parseInt(newItemQuantity, 10);
+        if (isNaN(qty) || qty < 0) {
+            alert("Please enter a valid quantity.");
+            return;
+        }
+        try {
+            await axios.post('http://localhost:10000/manager/inventory', {
+                name: newItemName,
+                quantity: qty
+            });
+            // Refresh the inventory list
+            const refreshed = await axios.get('http://localhost:10000/manager/inventory');
+            setInventoryItem(refreshed.data);
+
+            setShowAdd(false);
+            setNewItemName('');
+            setNewItemQuantity('');
+        } catch (error) {
+            console.error("Failed to create inventory item:", error);
+        }
     };
 
     //list of nav items for the the navigation bar
@@ -176,8 +212,99 @@ function Inventory() {
                 </div>
             </div>
         )}
+
+        {/*Edit Order Modal for editing inventory item quantities*/}
+        {showEdit && selectedInventoryItem && (
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
+            <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+             <h2 className="text-lg font-semibold mb-4">Edit Quantity</h2>
+                <p className="text-gray-700 mb-4">Editing: <strong>{selectedInventoryItem.name}</strong></p>
+                <input 
+                    type="number" 
+                    value={editedInventoryQuantity} 
+                    onChange={(e) => setEditedInventoryQuantity(e.target.value)} 
+                    className="w-full px-3 py-2 border rounded-lg mb-4"
+                    />
+                <div className="flex justify-end gap-4">
+                 <button 
+                    onClick={() => setShowEdit(false)}
+                    className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg text-gray-800"
+                >
+                    Cancel
+                </button>
+                <button 
+                    onClick={async () => {
+                        const qty = parseInt(editedInventoryQuantity, 10);
+                        if (isNaN(qty) || qty < 0) {
+                            alert("Please enter a valid quantity.");
+                            return;
+                        }
+                        try {
+                            await axios.patch(`http://localhost:10000/manager/inventory/${selectedInventoryItem.inventory_id}`, { quantity: qty });
+                            const refreshed = await axios.get('http://localhost:10000/manager/inventory');
+                            setInventoryItem(refreshed.data);
+                    
+                        } catch (error) {
+                            console.error("Failed to update inventory item:", error);
+                        } finally {
+                            setShowEdit(false);
+                            setSelectedInventoryItem(null);
+                            setEditedInventoryQuantity(null);
+                        }
+                    }}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                >
+                    Save
+                </button>
+             </div>
+            </div>
         </div>
-    );
-}
+        )}
+        {/* Add New Inventory Item Modal */}
+        {showAdd && (
+                    <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
+                        <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+                            <h2 className="text-lg font-semibold mb-4">Add New Inventory Item</h2>
+                            
+                            <label className="block mb-2 text-gray-700">Item Name</label>
+                            <input
+                                type="text"
+                                value={newItemName}
+                                onChange={(e) => setNewItemName(e.target.value)}
+                                className="w-full px-3 py-2 border rounded-lg mb-4"
+                                placeholder="Enter item name..."
+                            />
+
+                            <label className="block mb-2 text-gray-700">Quantity</label>
+                            <input
+                                type="number"
+                                value={newItemQuantity}
+                                onChange={(e) => setNewItemQuantity(e.target.value)}
+                                className="w-full px-3 py-2 border rounded-lg mb-4"
+                                placeholder="Enter quantity..."
+                            />
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    onClick={() => {
+                                        setShowAdd(false);
+                                        setNewItemName('');
+                                        setNewItemQuantity('');
+                                    }}
+                                    className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg text-gray-800"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleCreateNewItem}
+                                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+    </div>
+    );}
 
 export default Inventory;
