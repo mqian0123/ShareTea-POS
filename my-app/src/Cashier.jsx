@@ -297,6 +297,27 @@ function Cashier () {
         navigate('/');
     }
 
+    const OrderAPICall = () => {
+        const data = {
+            time: new Date(),
+            payment: "cash",
+            points: Math.floor(calculateTotal() * 0.5),
+            cost: calculateTotal(),
+            customerID: 250606,
+            employeeID: 11,
+            orderList: orderList,
+        }
+        axios.post('http://localhost:10000/cashier/addOrder', data).then((data) => {
+          //this console.log will be in our frontend console
+        console.log(data)
+        })
+        .catch(error => {
+            console.log("error");
+        });
+    }
+
+
+
     /**
      * @description Saves the customer name, orderList, activeButton, phoneNumber, and selectedTable to cookie storage upon change
      * @returns {Void}
@@ -354,7 +375,8 @@ function Cashier () {
                     <p className = "p-5 font-sans">
                         Total: 20 Orders
                     </p>
-                    <button className = "bg-white text-emerald-900 font-sans font-bold rounded-full p-5 m-5">
+                    <button onClick={OrderAPICall}
+                    className = "bg-white text-emerald-900 font-sans font-bold rounded-full p-5 m-5">
                         Report 📜
                     </button>
                     {/* Dropdown Avatar Menu */}

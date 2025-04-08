@@ -62,19 +62,42 @@ router.post('/addOrder', async (req, res) => {
 
         // get current orderID
         const result = await pool.query(
-          '"SELECT MAX(order_id) FROM orders'
+          'SELECT MAX(order_id) FROM orders'
         );
         orderID = result.rows[0]['max'] + 1 // current order ID = max orderID + 1
 
-        // initial insert into order table
+        // console.log("orderID: " + orderID);
+        // console.log("orderList length: " + orderList.length)
+        // console.log("name: " + orderList[0]['name'])
+        // console.log("price: " + orderList[0]['price'])
+        // console.log("toppings?: " + orderList[0]['toppings'])
+        // console.log()
+
         await pool.query(
             'INSERT INTO orders (time_stamp, payment_method, reward_points_earned, total_cost, customer_id, employee_id) VALUES ($1::TIMESTAMP, $2, $3, $4, $5, $6)',
             [time, payment, points, cost, customerID, employeeID]
         );
 
+        ///// VERIFIED UP TO HERE ////
+
         // Parse through orderList, each element is a menu item
         for (let i=0; i < orderList.length; i++) {
-            const menuID = orderList[i]['menuID']
+          
+            // const menuID = orderList[i]['menuID']
+            // just get the menuID from database based on name
+            const menuResult = await pool.query(
+              'SELECT * FROM menu_items WHERE name=$1',
+              [orderList[0]['name']]
+            );
+
+            const menuID = menuResult.rows[0]['menu_id']
+            
+            // increment total purchases in menu_items table
+            
+            
+            // ISSUE 1: orderList does not contain menuID
+            // console.log("menuID: " + menuID)
+
             // update JUNCT_order_items
             await pool.query(
                 'INSERT INTO JUNCT_order_items (order_id, menu_id) VALUES ($1, $2)',
@@ -85,7 +108,8 @@ router.post('/addOrder', async (req, res) => {
             let toppingsList = orderList[i]['toppings']
             for(let j=0; j < toppingsList.length; j++) {
               // updates total_times_ordered
-              const name = toppingList[j]
+              const name = toppingsList[j]
+              // console.log("topping name : " + name)
               await pool.query(
                 'UPDATE toppings SET total_times_ordered = total_times_ordered + 1 WHERE name = $1',
                 [name]
@@ -105,15 +129,18 @@ router.post('/addOrder', async (req, res) => {
               );
             }
 
+            // VERIFIED UP TO HERE
+
             // TODO: Deal with ice and sugar
 
             // update inventory for menu item ingredients
-            await pool.query(
+            const inventoryResult = await pool.query(
               'SELECT inventory_id FROM JUNCT_inventory_items WHERE menu_id = $1',
               [menuID]
             );
-            result.rows.forEach(async element => {
+            inventoryResult.rows.forEach(async element => {
               const inventoryID = element['inventory_id']
+              
               const result1 = await pool.query(
                 'SELECT quantity_used_per_menu_item FROM JUNCT_inventory_items WHERE inventory_id = $1 AND menu_id = $2',
                 [inventoryID, menuID]
@@ -127,6 +154,8 @@ router.post('/addOrder', async (req, res) => {
 
         }
 
+
+        
 
         
 
