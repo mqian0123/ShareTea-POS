@@ -25,8 +25,9 @@ function Inventory() {
     const [newItemName, setNewItemName] = useState('');
     const [newItemQuantity, setNewItemQuantity] = useState('');
 
-
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
+
+    const [searchQuery, setSearchQuery] = useState('');
 
     //List of inventory items
     //TODO: Fetch from backen
@@ -157,24 +158,38 @@ function Inventory() {
                     </div>
                 </div>
 
+                <div className="mb-6">
+                    <input
+                        type="text"
+                        placeholder="Search inventory..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                </div>
+
                 {/* Inventory Items List */}
                 <div className="space-y-4">
-                    {inventoryItem.map(item => (
-                        <div key={item.inventory_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border">
-                            <div>
-                                <p className="text-lg font-medium">{item.name}</p>
-                                <p className="text-sm text-gray-500"> Quantity: {item.quantity}</p>
+                {inventoryItem
+                        .filter(item =>
+                            item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                        .map(item => (
+                            <div key={item.inventory_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border">
+                                <div>
+                                    <p className="text-lg font-medium">{item.name}</p>
+                                    <p className="text-sm text-gray-500"> Quantity: {item.quantity}</p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <button onClick={() => handleEdit(item.inventory_id)} className="text-blue-600 hover:text-blue-800">
+                                        <SquarePen size={20} />
+                                    </button>
+                                    <button onClick={() => handleDeleteClick(item.inventory_id)} className="text-red-600 hover:text-red-800">
+                                        <Trash2 size={20} />
+                                    </button>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <button onClick={() => handleEdit(item.inventory_id)} className="text-blue-600 hover:text-blue-800">
-                                    <SquarePen size={20} />
-                                </button>
-                                <button onClick={() => handleDeleteClick(item.inventory_id)} className="text-red-600 hover:text-red-800">
-                                    <Trash2 size={20} />
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
                 
                 {/* Add New Inventory Item Button */}
