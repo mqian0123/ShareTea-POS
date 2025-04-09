@@ -14,6 +14,8 @@ function MenuItems() {
     //TODO: Fetch from backend
     const [menuItem, setMenuItem] = useState([]);
 
+    const [searchQuery, setSearchQuery] = useState('');
+
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
@@ -112,13 +114,29 @@ function MenuItems() {
                     </div>
                 </div>
 
+                <div className="mb-6">
+                <input
+                    type="text"
+                    placeholder="Search menu items..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+            </div>
+
                 {/* Menu Items List */}
                 <div className="space-y-4">
-                    {menuItem.map(item => (
+                {menuItem
+                    .filter(item =>
+                        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map(item => (
                         <div key={item.menu_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border">
                             <div>
                                 <p className="text-lg font-medium">{item.name}</p>
-                                <p className="text-sm text-gray-500"> Category: {item.category} |  Price: {item.price} | total purchases: {item.total_purchases}</p>
+                                <p className="text-sm text-gray-500">
+                                    Category: {item.category} | Price: {item.price} | Total Purchases: {item.total_purchases}
+                                </p>
                             </div>
                             <div className="flex items-center gap-4">
                                 <button onClick={() => handleEdit(item.menu_id)} className="text-blue-600 hover:text-blue-800">

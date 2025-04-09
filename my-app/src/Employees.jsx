@@ -30,10 +30,8 @@ function Employees() {
         email: ''
     });
 
+    const [searchQuery, setSearchQuery] = useState('');
     
-
-
-
     //List of current employees
     //TODO: Fetch from backend
     //  completed by yahia 
@@ -191,9 +189,27 @@ function Employees() {
                     </div>
                 </div>
 
+                <div className="mb-6">
+                    <input
+                        type="text"
+                        placeholder="Search employees..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                </div>
+
                 {/* List of employees */}
+                {/* Search will filter base on any employee field, name, email, phone, role... may modify later */}
                 <div className="space-y-4">
-                    {employees.map(emp => (
+                {employees
+                    .filter(emp =>
+                        emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        emp.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        emp.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        emp.phone_number.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map(emp => (
                         <div key={emp.employee_id} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border">
                             <div>
                                 <p className="text-lg font-medium">{emp.name}</p>
