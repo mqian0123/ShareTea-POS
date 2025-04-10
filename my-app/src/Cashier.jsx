@@ -194,6 +194,16 @@ function Cashier () {
 
     ]
 
+    const categories = [
+        { name: null, status: "Available"},
+        { name: "Fruit Tea", status: "Available"},
+        { name: "Milk Tea", status: "Available"},
+        { name: "Brewed Tea", status: "Available"},
+        { name: "Ice Blended", status: "Available"},
+        { name: "Tea Mojito", status: "Available"},
+        { name: "Creama", status: "Available"},
+    ]
+
     /**
      * @description Filter the menu items based on the selected category and search term
      * @returns {Array} filteredItems - The filtered menu items
@@ -457,50 +467,18 @@ function Cashier () {
                     </form>
                     {/* Category Cards */}
                     <div className = "flex overflow-auto">
-                        <Categories status="Available" 
-                        categoryName = "All"
-                        
-                        onClick = {() => {
-                            setSelectedCategory(null);
-                          }}
-                        > </Categories>
-                        <Categories status="Available" 
-                        categoryName = "Fruit Tea"
-                        onClick = {() => {
-                            setSelectedCategory(selectedCategory === "Fruit Tea" ? null : "Fruit Tea");
-                          }}
-                        >
-                        </Categories>
-                        <Categories status = "Available" categoryName = "Milk Tea"
-                        onClick = {() => {
-                            setSelectedCategory(selectedCategory === "Milk Tea" ? null : "Milk Tea");
-                          }}
-                        >
-                        </Categories>
-                        <Categories status = "Available" categoryName = "Brewed Tea"
-                        onClick = {() => {
-                            setSelectedCategory(selectedCategory === "Brewed Tea" ? null : "Brewed Tea");
-                          }}
-                        >
-                        </Categories>
-                        <Categories status = "Available" categoryName = "Ice Blended"
-                        onClick = {() => {
-                            setSelectedCategory(selectedCategory === "Ice Blended" ? null : "Ice Blended");
-                          }}
-                        >
-                        </Categories>   
-                        <Categories status = "Available" categoryName = "Tea Mojito"
-                        onClick = {() => {
-                            setSelectedCategory(selectedCategory === "Tea Mojito" ? null : "Tea Mojito");
-                          }}
-                        >
-                        </Categories>
-                        <Categories status = "Available" categoryName = "Creama"
-                        onClick = {() => {
-                            setSelectedCategory(selectedCategory === "Creama" ? null : "Creama");
-                          }}
-                        >
-                        </Categories>
+                        {categories.map((category) => (
+                            <Categories 
+                                onClick = {() => setSelectedCategory(category.name)}
+                                status = {category.status} 
+                                categoryName = {category.name === null ? "All" : category.name}
+                                className={`rounded-full cursor-pointer py-5 ${
+                                    selectedCategory === category.name 
+                                    ? 'hover:cursor-pointer w-auto m-5 inline-block border  py-4 pr-20 pl-5 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 bg-emerald-900 text-white' 
+                                    : 'hover:cursor-pointer w-auto m-5 inline-block bg-white border py-4 pr-20 pl-5 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-emerald-900 hover:text-white focus:bg-emerald-900 focus:text-white'
+                                }`}
+                            />
+                        ))}
                     </div>
 
                     {/* Item Cards filtered based on selected category */}
