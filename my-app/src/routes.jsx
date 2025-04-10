@@ -6,6 +6,7 @@ import Employees from "./Employees";
 import MenuItems from "./MenuItems";
 import Inventory from "./Inventory";
 import Login from "./Login";
+import Reports from "./Reports";
 
 /**
  * AppRoutes Component
@@ -36,6 +37,8 @@ function AppRoutes() {
       <Route path = "/login" element = {<Login/>} />
          {/* Route for the inventory screen */}
       <Route path="/manager/inventory" element={<Inventory />} />
+      {/* Route for the Reports page */}
+      <Route path="/manager/reports" element={<Reports />} />
     </Routes>
   );
 }

@@ -240,7 +240,7 @@ router.patch('/inventory/:id', async (req, res) => {
     const { name, quantity} = req.body;
     try {
         const result = await pool.query(
-            'UPDATE inventory SET name = COALESCE($1, name), quantity = COALESCE($2, price) WHERE inventory_id = $3 RETURNING *',
+            'UPDATE inventory SET name = COALESCE($1, name), quantity = COALESCE($2, quantity) WHERE inventory_id = $3 RETURNING *',
             [name, quantity, id]
         );
         if (result.rows.length === 0) {
