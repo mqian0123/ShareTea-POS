@@ -41,6 +41,25 @@ router.get('/qUsed', async (req, res) => {
   }
 });
 
+router.get('/employee', async (req, res) => {
+  try {
+    // console.log("req ?? " + JSON.stringify(req.body, null, 2));
+    const email = req.query.email;
+    console.log("email: " + email);
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const result = await pool.query('SELECT * FROM employees WHERE email = $1', [email]);
+    res.json(result.rows);
+    // console.log("get employee worked, " + result.rows[0]);
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
+});
 
 // testing getOrderID
 router.get('/orderID', async (req, res) => {
