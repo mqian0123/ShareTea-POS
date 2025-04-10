@@ -118,7 +118,11 @@ function Cashier () {
     useEffect(() => {
       const fetchEmployeeID = async () => {
         try {
-          const response = await axios.post(SERVER_API + "/employee", {email});
+          const response = await axios.get(SERVER_API + "cashier/employee", {
+            params: { email: email }
+          });
+          
+            // const response = await axios.post(SERVER_API + "cashier/employees");
         //   setEmployeeID(response.data); // adjust based on actual API shape
           console.log(response.data);
         } catch (error) {
@@ -339,6 +343,7 @@ function Cashier () {
         console.log("server api: " + SERVER_API)
         axios.post(SERVER_API + 'cashier/addOrder', data).then((data) => {
           //this console.log will be in our frontend console
+          console.log("add order worked!");
         // console.log("server api: " + SERVER_API)
         })
         .catch(error => {
