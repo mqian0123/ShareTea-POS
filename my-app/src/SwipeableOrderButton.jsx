@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-
+import axios from 'axios';
+const SERVER_API = import.meta.env.VITE_SERVER_API;
 /**
  * A React component that provides a swipeable button for placing an order.
  * The button can be dragged to the right to complete an action, and it resets automatically after completion.
@@ -8,7 +9,7 @@ import React, { useState, useRef, useEffect } from 'react';
  * @param {Function} clearUserName - A function to clear the username after the order is placed.
  * @author Garry Peter Thompson
  */
-function SwipeableOrderButton({ setOrderList, clearUserName, setSelectedTable, setPhoneNumber}) {
+function SwipeableOrderButton({ setOrderList, clearUserName, setSelectedTable, setPhoneNumber, data}) {
     // State to track whether the button is being dragged
     const [isDragging, setIsDragging] = useState(false);
 
@@ -58,7 +59,7 @@ function SwipeableOrderButton({ setOrderList, clearUserName, setSelectedTable, s
             // Check if the swipe action is completed
             if (newPosition >= maxPosition.current) {
                 setCompleted(true);
-                placeOrder();
+                placeOrder(data);
             }
         }
     };
@@ -79,13 +80,13 @@ function SwipeableOrderButton({ setOrderList, clearUserName, setSelectedTable, s
      * Clears the order list and username, and resets the button after a short delay.
      */
     const placeOrder = (data) => {
-            axios.post('http://localhost:10000/cashier/addOrder', data).then((data) => {
-            //this console.log will be in our frontend console
-          console.log(data)
-          })
-          .catch(error => {
+        console.log("data: ", data)
+        axios.post(SERVER_API + 'cashier/addOrder', data).then((data) => {
+            // console.log("data: ", data)
+        })
+        .catch(error => {
               console.log("error");
-          });
+        });
         console.log('Order placed successfully!');
         setOrderList([]);
         clearUserName('');
