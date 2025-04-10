@@ -9,6 +9,10 @@ function MenuItems() {
     const navigate = useNavigate();
     const [showConfirm, setShowConfirm] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editItemData, setEditItemData] = useState(null);
+    const [ingredientString, setIngredientString] = useState('');
 
     //List of menu items
     //TODO: Fetch from backend
@@ -37,7 +41,6 @@ function MenuItems() {
     };
 
     const confirmDelete = async () => {
-        
         try {
             await axios.delete('http://localhost:10000/manager/menu/' + pendingDeleteId);
             setMenuItem(menuItem.filter(item => item.menu_id !== pendingDeleteId));
@@ -54,17 +57,38 @@ function MenuItems() {
         setPendingDeleteId(null);
     };
 
-    //handler for the edit button that opens the edit modal
+    const handleAdd = () => {
+        setShowAddModal(true);
+    };
+    
     const handleEdit = (id) => {
-        // TODO: Implement edit logic or modal popup
-        console.log("Edit menu item", id);
+        const itemToEdit = menuItem.find(item => item.menu_id === id);
+        saveEditedMenuitem(itemToEdit);
+        setShowEditModal(true);
     };
 
-    //handler for the add button that opens the add modal
-    const handleAdd = () => {
-        // TODO:  open modal
-        console.log("Add new menu item");
+    const saveEditedMenuitem = async(updatedItem) => {
+        try {
+            const response = await axios.patch("http://localhost:10000/manager/menu/" + updatedItem.menu_id, {
+                name: updatedItem.name,
+                price: updatedItem.price,
+                total_purchases: updatedItem.total_purchases,
+                category: updatedItem.category
+            })
+
+            const updatedData = response.data;
+    
+            // Update local state
+            setMenuItem(prev =>
+                prev.map(menu =>
+                    menu.menu_id === updatedData.menu_id ? updatedData : menu
+                )
+            );
+        } catch (error) {
+            console.error('Failed to update menu item:', error);
+        }
     };
+    
 
     //list of nav items for the the navigation bar
     const navItems = [
@@ -185,6 +209,98 @@ function MenuItems() {
                 </div>
             </div>
         )}
+
+        {showAddModal && (
+            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
+                <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+                    <h2 className="text-lg font-semibold mb-4">Add New Menu Item</h2>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            // TODO: Add form submission logic
+                            const ingredientsArray = ingredientString
+                                .split(',')
+                                .map(i => i.trim())
+                                .filter(i => i.length > 0);
+                            // TODO: Send the ingredientsArray to your backend
+                            setShowAddModal(false);
+                        }}
+                        className="space-y-4"
+                    >
+                        <input type="text" placeholder="Name" className="w-full border rounded p-2" required />
+                        <input type="text" placeholder="Category" className="w-full border rounded p-2" required />
+                        <input type="number" placeholder="Price" className="w-full border rounded p-2" required />
+                        
+                        {/* Ingredients Field */}
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Ingredients (comma-separated)</label>
+                            <input
+                                type="text"
+                                className="w-full border border-gray-300 rounded-lg p-2"
+                                placeholder="e.g. Milk, Tapioca Pearls, Black Tea"
+                                value={ingredientString}
+                                onChange={(e) => setIngredientString(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex justify-end gap-2">
+                            <button type="button" onClick={() => setShowAddModal(false)} className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded">
+                                Cancel
+                            </button>
+                            <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded">
+                                Add
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )}
+
+        {/* Edit Modal */}
+        {showEditModal && editItemData && (
+            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
+                <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+                    <h2 className="text-lg font-semibold mb-4">Edit Menu Item</h2>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            // TODO: Add edit logic
+                            saveEditedMenuitem(editItemData.menu_id);
+                            setShowEditModal(false);
+                        }}
+                        className="space-y-4"
+                    >
+                        <input
+                            type="text"
+                            defaultValue={editItemData.name}
+                            className="w-full border rounded p-2"
+                            required
+                        />
+                        <input
+                            type="text"
+                            defaultValue={editItemData.category}
+                            className="w-full border rounded p-2"
+                            required
+                        />
+                        <input
+                            type="number"
+                            defaultValue={editItemData.price}
+                            className="w-full border rounded p-2"
+                            required
+                        />
+                        <div className="flex justify-end gap-2">
+                            <button type="button" onClick={() => setShowEditModal(false)} className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded">
+                                Cancel
+                            </button>
+                            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )}
+
         </div>
     );
 }
