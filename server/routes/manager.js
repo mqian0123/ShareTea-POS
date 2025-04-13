@@ -368,15 +368,48 @@ router.get('/credit', async (req, res) => {
 });
 
 
+//Inventory usage 
+router.get('/inventory-usage', async (req, res) => {
+    try {
+        const { timeframe } = req.query;
 
+        // Default to 1 week
+        const validTimeframes = {
+            day: '1 day',
+            week: '1 week',
+            month: '1 month',
+            year: '1 year'
+          };
+          
+          const tf = (timeframe || '').toLowerCase();
+          const interval = validTimeframes[tf] || '1 week';
 
+          console.log('Received timeframe:', timeframe);
+          console.log('Using interval:', interval);
+          
+          const usageQuery = `
+                    SELECT
+                        i.inventory_id,
+                        i.name,
+                        i.quantity,
+                        COUNT(*) AS usage_count
+                    FROM orders o
+                    JOIN junct_order_items joi_menu ON o.order_id = joi_menu.order_id
+                    JOIN junct_inventory_items joi ON joi_menu.menu_id = joi.menu_id
+                    JOIN inventory i ON joi.inventory_id = i.inventory_id
+                    WHERE o.time_stamp >= NOW() - INTERVAL '${interval}'
+                    GROUP BY i.inventory_id, i.name, i.quantity
+                    ORDER BY usage_count DESC;
+                    `;
 
-
-
-
-
-
-
+            const result = await pool.query(usageQuery);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            error: 'Internal Server Error'});
+    }
+});
 
 
 module.exports = router;
