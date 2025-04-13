@@ -61,6 +61,22 @@ router.get('/employee', async (req, res) => {
 
 });
 
+router.get('/customer', async (req, res) => {
+  try {
+    const phoneNumber = req.query.phoneNumber;
+    if (!phoneNumber) {
+      return res.status(400).json({ error: 'Phone number is required' });
+    }
+    const result = await pool.query('SELECT * FROM customers WHERE phone_number = $1', [phoneNumber]);
+    res.json(result.rows);
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
+});
+
 // testing getOrderID
 router.get('/orderID', async (req, res) => {
   try {
@@ -72,6 +88,30 @@ router.get('/orderID', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+router.get('/addCustomer', async (req, res) => {
+  try {
+    const phoneNumber = req.query.phoneNumber;
+    if (!phoneNumber) {
+      console.log("what? " + phoneNumber);
+      return res.status(400).json({ error: 'Phone number is required' });
+    }
+    const checkResult = await pool.query('SELECT * FROM customers WHERE phone_number = $1', [phoneNumber]);
+    if(checkResult.rows[0] != undefined) {
+      return;
+    }
+    else {
+      const result = await pool.query('INSERT INTO customers (total_reward_points, phone_number) VALUES (0, $1) RETURNING customer_id', [phoneNumber]);
+      res.json(result.rows);
+    }
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
+});
+
 
 // add order
 router.post('/addOrder', async (req, res) => {
@@ -85,24 +125,21 @@ router.post('/addOrder', async (req, res) => {
         );
         orderID = result.rows[0]['max'] + 1 // current order ID = max orderID + 1
 
-        // console.log("orderID: " + orderID);
-        // console.log("orderList length: " + orderList.length)
-        // console.log("name: " + orderList[0]['name'])
-        // console.log("price: " + orderList[0]['price'])
-        // console.log("toppings?: " + orderList[0]['toppings'])
-        // console.log()
 
         await pool.query(
             'INSERT INTO orders (time_stamp, payment_method, reward_points_earned, total_cost, customer_id, employee_id) VALUES ($1::TIMESTAMP, $2, $3, $4, $5, $6)',
             [time, payment, points, cost, customerID, employeeID]
         );
 
-        ///// VERIFIED UP TO HERE ////
+        // Update customer total_reward_points
+        await pool.query(
+            'UPDATE customers SET total_reward_points = total_reward_points + $1 WHERE customer_id = $2',
+            [points, customerID]
+        );
 
         // Parse through orderList, each element is a menu item
         for (let i=0; i < orderList.length; i++) {
           
-            // const menuID = orderList[i]['menuID']
             // just get the menuID from database based on name
             const menuResult = await pool.query(
               'SELECT * FROM menu_items WHERE name=$1',
@@ -112,10 +149,9 @@ router.post('/addOrder', async (req, res) => {
             const menuID = menuResult.rows[0]['menu_id']
             
             // increment total purchases in menu_items table
-            
-            
-            // ISSUE 1: orderList does not contain menuID
-            // console.log("menuID: " + menuID)
+            await pool.query('UPDATE menu_items SET total_purchases = total_purchases + 1 WHERE menu_id = $1', 
+                [menuID]
+            );
 
             // update JUNCT_order_items
             await pool.query(

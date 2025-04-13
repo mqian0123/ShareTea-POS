@@ -9,7 +9,7 @@ const SERVER_API = import.meta.env.VITE_SERVER_API;
  * @param {Function} clearUserName - A function to clear the username after the order is placed.
  * @author Garry Peter Thompson
  */
-function SwipeableOrderButton({ setOrderList, clearUserName, setSelectedTable, setPhoneNumber, data}) {
+function SwipeableOrderButton({setOrderList, clearUserName, setSelectedTable, setPhoneNumber, setCustomerID, data}) {
     // State to track whether the button is being dragged
     const [isDragging, setIsDragging] = useState(false);
 
@@ -80,18 +80,17 @@ function SwipeableOrderButton({ setOrderList, clearUserName, setSelectedTable, s
      * Clears the order list and username, and resets the button after a short delay.
      */
     const placeOrder = (data) => {
-        console.log("data: ", data)
         axios.post(SERVER_API + 'cashier/addOrder', data).then((data) => {
-            // console.log("data: ", data)
         })
         .catch(error => {
-              console.log("error");
+              console.log(error);
         });
         console.log('Order placed successfully!');
         setOrderList([]);
         clearUserName('');
         setSelectedTable('Choose a Table');
         setPhoneNumber('xxx-xxx-xxxx')
+        setCustomerID(1);
         // Automatically reset the button after a short delay
         setTimeout(() => {
             setPosition(0);
