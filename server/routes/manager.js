@@ -411,5 +411,59 @@ router.get('/inventory-usage', async (req, res) => {
     }
 });
 
+router.get('/reports/x', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT 
+                hour_series.hour,
+                COALESCE(SUM(total_cost), 0) AS sales,
+                COALESCE(SUM(CASE WHEN LOWER(payment_method) = 'cash' THEN total_cost ELSE 0 END), 0) AS cash_sales,
+                COALESCE(SUM(CASE WHEN LOWER(payment_method) = 'credit' THEN total_cost ELSE 0 END), 0) AS credit_sales,
+                COALESCE(SUM(reward_points_earned), 0) AS total_reward_points,
+                COALESCE(COUNT(orders.order_id), 0) AS number_of_sales
+            FROM 
+                generate_series(
+                    CURRENT_DATE + INTERVAL '6 hours', 
+                    CURRENT_DATE + INTERVAL '22 hours', 
+                    '1 hour'::interval
+                ) AS hour_series(hour)
+            LEFT JOIN orders ON DATE_TRUNC('hour', orders.time_stamp) = hour_series.hour
+            WHERE (orders.time_stamp >= CURRENT_DATE + INTERVAL '6 hours' OR orders.time_stamp IS NULL)
+            GROUP BY hour_series.hour
+            ORDER BY hour_series.hour
+        `);
+        res.json(result.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+router.get('/reports/z', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT
+                SUM(orders.total_cost) AS total_sales,
+                SUM(CASE WHEN LOWER(orders.payment_method) = 'cash' THEN orders.total_cost ELSE 0 END) AS total_cash,
+                SUM(CASE WHEN LOWER(orders.payment_method) = 'credit' THEN orders.total_cost ELSE 0 END) AS total_credit,
+                STRING_AGG(DISTINCT employees.name, ', ') AS employee_signatures,
+                ROUND(SUM(orders.total_cost) / 1.1 * 0.1, 2) AS total_tax_paid
+            FROM orders
+            JOIN employees ON orders.employee_id = employees.employee_id
+            WHERE orders.time_stamp >= CURRENT_DATE
+              AND orders.time_stamp < CURRENT_DATE + INTERVAL '1 day'
+        `);
+        res.json(result.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
+
+
 
 module.exports = router;
