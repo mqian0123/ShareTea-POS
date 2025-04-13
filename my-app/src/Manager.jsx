@@ -21,60 +21,108 @@ import {
  * @returns {JSX.Element} The rendered Manager Dashboard page.
  */
 
-// const pieData = [
-//     { name: 'Card', value: 55.78, color: '#A3E635' },
-//     { name: 'Cash', value: 44.22, color: '#FACC15' },
-// ];
-
-// Temporary data for the bar chart (to be replaced with real database data later)
-/**
- * Data for the bar chart showing monthly sales.
- * 
- * @constant {Array<Object>}
- */
-const barData = [
-    { name: 'Jan', value: 8000 },
-    { name: 'Feb', value: 7600 },
-    { name: 'Mar', value: 7000 },
-    { name: 'Apr', value: 8500 },
-    { name: 'May', value: 6200 },
-    { name: 'Jun', value: 5000 },
-    { name: 'Jul', value: 6300 },
-    { name: 'Aug', value: 6500 },
-    { name: 'Sep', value: 0 },
-    { name: 'Oct', value: 0 },
-    { name: 'Nov', value: 0 },
-    { name: 'Dec', value: 0 },
-];
 
 function Manager() {
     // Hook to programmatically navigate between routes
     const navigate = useNavigate();
     const [pieData, setPieData] = useState([
-        { name: 'Card', value: 55.78, color: '#A3E635' },
-        { name: 'Cash', value: 44.22, color: '#FACC15' },
+        { name: 'Card', value: 0.00, color: '#A3E635' },
+        { name: 'Cash', value: 0.00, color: '#FACC15' },
     ]);
+    const [grossRevenue, setGrossRevenue] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+    const [topEmployee, setTopEmployee] = useState('');
+    const [barChartData, setBarChartData] = useState([]);
 
+    // Fetch gross revenue data
+    useEffect(() => {
+        const fetchRevenue = async () => {
+            try {
+                const response = await axios.get('http://localhost:10000/manager/monthly-revenue'); 
+                const revenue = parseFloat(response.data.total_cost) || 0;
+                setGrossRevenue(revenue);
+            } catch (error) {
+                console.error('Error fetching gross revenue:', error);
+            }
+        };
+        fetchRevenue();
+    }, []);
+
+    // Fetch total orders data
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const response = await axios.get('http://localhost:10000/manager/monthly-orders');
+                const orders = parseInt(response.data.total_orders) || 0;
+                setTotalOrders(orders);
+            } catch (error) {
+                console.error('Error fetching order count:', error);
+            }
+        };
+        fetchOrders();
+    }, []);
+
+    // Fetch top employee data
+    useEffect(() => {
+        const fetchTopEmployee = async () => {
+            try {
+                const response = await axios.get('http://localhost:10000/manager/top-employee');
+                console.log(response.data.name)
+                const name = response.data.name || 'N/A';
+                setTopEmployee(name);
+            } catch (error) {
+                console.error('Error fetching top employee:', error);
+            }
+        };
+        fetchTopEmployee();
+    }, []);
+
+    // Fetch payment method data for the pie chart
     useEffect(() => {
         const fetchPieData = async () => {
             try {
-                const response = await axios.get('https://server-pkpv.onrender.com/manager/credit');
-                const ratio = response.data.ratio ?? 0;
-                let percentage = parseFloat((ratio * 100).toFixed(2))
-                // console.log(percentage)
+                const response = await axios.get('http://localhost:10000/manager/payment-methods');
+    
+                const cashCount = response.data.cash || 0;
+                const cardCount = response.data.card || 0;
+                const total = cashCount + cardCount;
+    
+                const percentageCash = total > 0 ? (cashCount / total) * 100 : 0;
+                const percentageCard = total > 0 ? (cardCount / total) * 100 : 0;
+    
                 const newPieData = [
-                    { name: 'Credit', value: percentage, color: '#FACC15' },
-                    { name: 'Cash', value: (100 - percentage), color: '#A3E635' },
+                    { name: 'Cash', value: parseFloat(percentageCash.toFixed(2)), color: '#A3E635' },
+                    { name: 'Card', value: parseFloat(percentageCard.toFixed(2)), color: '#FACC15' },
                 ];
-                // console.log("Fetched Pie Data:", newPieData);  // Log the fetched data
+    
                 setPieData(newPieData);
             } catch (error) {
-                console.error('Error fetching credit ratio:', error);
-                setPieData([]);  // Set empty data if there's an error
+                console.error('Error fetching payment method data:', error);
+                setPieData([]);
             }
         };
+    
         fetchPieData();
-    }, []);  // Empty dependency array ensures it runs once when the component mounts
+    }, []);
+
+    // Fetch monthly sales data for the bar chart
+    useEffect(() => {
+    const fetchMonthlySales = async () => {
+        try {
+            const response = await axios.get('http://localhost:10000/manager/monthly-sales');
+
+            const formatted = response.data.map(row => ({
+                name: row.month, // e.g., Jan, Feb
+                value: parseFloat(row.total),
+            }));
+
+            setBarChartData(formatted);
+        } catch (error) {
+            console.error('Error fetching monthly sales:', error);
+        }
+    };
+    fetchMonthlySales();
+}, []);
     
 
     /**
@@ -144,15 +192,15 @@ function Manager() {
                 {/* Stats Section */}
                 <div className="grid grid-cols-4 gap-6 mb-8">
                     {[
-                        { label: 'Gross Revenue', value: '$3,321.00' },
-                        { label: 'Total Orders Placed', value: '2520' },
-                        { label: 'Toppings Sales', value: '$1,250.00' },
-                        { label: 'Total Tax', value: '$575.00' },
+                        { label: 'Gross Revenue', value: `$${grossRevenue.toFixed(2)}` },
+                        { label: 'Total Orders Placed', value: totalOrders.toLocaleString() },
+                        { label: 'Total Tax', value:  `$${(grossRevenue * .05).toFixed(2)}` },
+                        { label: 'Top Employee', value: topEmployee },
                     ].map((stat) => (
                         <div className="bg-white p-5 rounded-xl shadow-sm border" key={stat.label}>
                             <p className="text-sm text-gray-500">{stat.label}</p>
                             <h2 className="text-2xl font-bold">{stat.value}</h2>
-                            <p className="text-xs text-gray-400 mt-1">From this month</p>
+                            <p className="text-xs text-gray-400 mt-1">In the last month</p>
                         </div>
                     ))}
                 </div>
@@ -160,7 +208,7 @@ function Manager() {
                 <div className="grid grid-cols-3 gap-6">
                     {/* Pie Chart Section */}
                     <div className="bg-white p-5 rounded-xl shadow-sm border col-span-1">
-                        <h3 className="text-md font-semibold text-gray-700 mb-4">Card vs. Credit</h3>
+                        <h3 className="text-md font-semibold text-gray-700 mb-4">Cash vs. Card </h3>
                         <PieChart width={250} height={200}>
                             <Pie data={pieData} dataKey="value" innerRadius={50} outerRadius={70} label>
                                 {pieData.map((entry, index) => (
@@ -176,21 +224,18 @@ function Manager() {
                                 </span>
                             ))}
                         </div>
+                        <p className="text-xs text-gray-400 mt-4">In the last Year</p>
                     </div>
 
                     {/* Bar Chart Section */}
                     <div className="bg-white p-5 rounded-xl shadow-sm border col-span-2">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-md font-semibold text-gray-700">Monthly sales report</h3>
-                            <select className="border border-gray-200 rounded px-2 py-1 text-sm">
-                                <option>Monthly</option>
-                                <option>Weekly</option>
-                            </select>
+                            <h3 className="text-md font-semibold text-gray-700">Monthly Sales Report</h3>
                         </div>
                         <BarChart
                             width={700}
                             height={200}
-                            data={barData}
+                            data={barChartData}
                             margin={{ top: 5, right: 0, left: 15, bottom: 15 }}
                         >
                             <XAxis dataKey="name">

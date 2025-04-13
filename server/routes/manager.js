@@ -8,6 +8,104 @@ const router = express.Router();
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// API CALLS FOR DASHBOARD
+
+//get the total revenue in the last month
+router.get('/monthly-revenue', async (req, res) => {
+    try {
+        const revenueQuery = `
+            SELECT SUM(total_cost) AS total_cost
+            FROM orders
+            WHERE time_stamp >= NOW() - INTERVAL '1 month';
+        `;
+
+        const result = await pool.query(revenueQuery);
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+//get the number of orders in the last month
+router.get('/monthly-orders', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT COUNT(*) AS total_orders
+            FROM orders
+            WHERE time_stamp >= NOW() - INTERVAL '1 month';
+        `);
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+//get the top employee in the last month (by number of orders handled)
+router.get('/top-employee', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT e.name, COUNT(*) AS orders_handled
+            FROM orders o
+            JOIN employees e ON o.employee_id = e.employee_id
+            WHERE o.time_stamp >= NOW() - INTERVAL '1 month'
+            GROUP BY e.employee_id, e.name
+            ORDER BY orders_handled DESC
+            LIMIT 1;
+        `);
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+//get the payment methods used in the last year and their counts (cash vs card)
+router.get('/payment-methods', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT payment_method, COUNT(*) AS count
+            FROM orders
+            WHERE time_stamp >= NOW() - INTERVAL '1 year'
+            GROUP BY payment_method;
+        `);
+
+        // Reshape the result into a simple object like { cash: 50, card: 80 }
+        const data = {};
+        result.rows.forEach(row => {
+            data[row.payment_method.toLowerCase()] = parseInt(row.count);
+        });
+
+        res.json(data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+//get the total sales for each month in the current year (in $USD)
+router.get('/monthly-sales', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT
+                TO_CHAR(DATE_TRUNC('month', time_stamp), 'Mon') AS month,
+                DATE_PART('month', time_stamp) AS month_num,
+                SUM(total_cost) AS total
+            FROM orders
+            WHERE time_stamp >= DATE_TRUNC('year', CURRENT_DATE)
+            GROUP BY month, month_num
+            ORDER BY month_num;
+        `);
+
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // API CALLS FOR EMPLOYEE
 
 // Get all employees
@@ -178,6 +276,7 @@ router.get('/menu/:id', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
