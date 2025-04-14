@@ -10,6 +10,9 @@ import {
     BarChart, Bar, XAxis, YAxis, Tooltip, Label
 } from 'recharts';
 
+const SERVER_API = import.meta.env.VITE_SERVER_API;
+
+
 /**
  * Manager Component
  *
@@ -38,7 +41,7 @@ function Manager() {
     useEffect(() => {
         const fetchRevenue = async () => {
             try {
-                const response = await axios.get('http://localhost:10000/manager/monthly-revenue'); 
+                const response = await axios.get(SERVER_API + 'manager/monthly-revenue'); 
                 const revenue = parseFloat(response.data.total_cost) || 0;
                 setGrossRevenue(revenue);
             } catch (error) {
@@ -52,7 +55,7 @@ function Manager() {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await axios.get('http://localhost:10000/manager/monthly-orders');
+                const response = await axios.get(SERVER_API + 'manager/monthly-orders');
                 const orders = parseInt(response.data.total_orders) || 0;
                 setTotalOrders(orders);
             } catch (error) {
@@ -66,7 +69,7 @@ function Manager() {
     useEffect(() => {
         const fetchTopEmployee = async () => {
             try {
-                const response = await axios.get('http://localhost:10000/manager/top-employee');
+                const response = await axios.get(SERVER_API + 'manager/top-employee');
                 console.log(response.data.name)
                 const name = response.data.name || 'N/A';
                 setTopEmployee(name);
@@ -81,7 +84,7 @@ function Manager() {
     useEffect(() => {
         const fetchPieData = async () => {
             try {
-                const response = await axios.get('http://localhost:10000/manager/payment-methods');
+                const response = await axios.get(SERVER_API + 'manager/payment-methods');
     
                 const cashCount = response.data.cash || 0;
                 const cardCount = response.data.card || 0;
@@ -109,7 +112,7 @@ function Manager() {
     useEffect(() => {
     const fetchMonthlySales = async () => {
         try {
-            const response = await axios.get('http://localhost:10000/manager/monthly-sales');
+            const response = await axios.get(SERVER_API + 'manager/monthly-sales');
 
             const formatted = response.data.map(row => ({
                 name: row.month, // e.g., Jan, Feb

@@ -5,6 +5,9 @@ import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, UserPlus } from 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const SERVER_API = import.meta.env.VITE_SERVER_API;
+
+
 /**
  * 
  * @description Creates the employees page for the manager GUI
@@ -41,7 +44,7 @@ function Employees() {
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
-                const response = await axios.get('http://localhost:10000/manager/employees');
+                const response = await axios.get(SERVER_API + 'manager/employees');
                 setEmployees(response.data);
             } catch (error) {
                 console.error('Error fetching employees:', error);
@@ -63,7 +66,7 @@ function Employees() {
     const confirmDelete = async () => {
         
         try {
-            await axios.delete('http://localhost:10000/manager/employees/' + pendingDeleteId);
+            await axios.delete(SERVER_API + 'manager/employees/' + pendingDeleteId);
             setEmployees(prev => prev.filter(emp => emp.employee_id !== pendingDeleteId));
         } catch (error) {
             console.error("Failed to delete employee:", error);
@@ -87,7 +90,7 @@ function Employees() {
     
     const saveEditedEmployee = async (updatedEmployee) => {
         try {
-            const response = await axios.patch("http://localhost:10000/manager/employees/" + updatedEmployee.employee_id, {
+            const response = await axios.patch(SERVER_API + "manager/employees/" + updatedEmployee.employee_id, {
                 name: updatedEmployee.name,
                 role: updatedEmployee.role,
                 phone_number: updatedEmployee.phone_number,
@@ -119,7 +122,7 @@ function Employees() {
 
     const saveNewEmployee = async () => {
         try {
-            const response = await axios.post('http://localhost:10000/manager/employees', {
+            const response = await axios.post(SERVER_API + 'manager/employees', {
                 name: newEmployee.name,
                 role: newEmployee.role,
                 phone_number: newEmployee.phone_number,
