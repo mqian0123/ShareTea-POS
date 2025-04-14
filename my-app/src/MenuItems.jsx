@@ -14,6 +14,14 @@ function MenuItems() {
     const [editItemData, setEditItemData] = useState(null);
     const [ingredientString, setIngredientString] = useState('');
 
+
+
+    const [newItemName, setNewItemName] = useState('');
+    const [newItemPrice, setNewItemPrice] = useState('');
+    const [newItemCategory, setNewItemCategory] = useState('');
+    const [newItemIngredients, setNewItemIngredients] = useState([]); // this should be an array of inventory ids
+
+
     //List of menu items
     //TODO: Fetch from backend
     const [menuItem, setMenuItem] = useState([]);
@@ -88,7 +96,39 @@ function MenuItems() {
             console.error('Failed to update menu item:', error);
         }
     };
+
+    const handleAddItem = async () => {
+        console.log("Recieved");
+        try {
+            // 1. Add the menu item
+            console.log("Trying");
+            const menuRes = await axios.post('http://localhost:10000/menu', {
+                name: newItemName,
+                price: newItemPrice,
+                category: newItemCategory,
+            });
     
+            console.log("Posted item");
+            const menuItemId = menuRes.data.id;
+    
+            // 2. Add the ingredients using the menu item ID
+            if (newItemIngredients.length > 0) {
+                await axios.post(`http://localhost:10000/menu/ingredients/${menuItemId}`, {
+                    inventory_names: newItemIngredients,
+                });
+            }
+            console.log("Posted ingredients");
+    
+            // Optionally refetch or update UI
+            // fetchMenuItems(); // Or however you're refreshing the UI
+    
+            console.log('Item added successfully!');
+        } catch (error) {
+            console.error('Error adding item:', error);
+        }
+    };
+    
+      
 
     //list of nav items for the the navigation bar
     const navItems = [
@@ -217,37 +257,69 @@ function MenuItems() {
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
-                            // TODO: Add form submission logic
                             const ingredientsArray = ingredientString
                                 .split(',')
                                 .map(i => i.trim())
                                 .filter(i => i.length > 0);
-                            // TODO: Send the ingredientsArray to your backend
+
+                            setNewItemIngredients(ingredientsArray);
+                            console.log("Here");
+                            handleAddItem();
                             setShowAddModal(false);
                         }}
                         className="space-y-4"
                     >
-                        <input type="text" placeholder="Name" className="w-full border rounded p-2" required />
-                        <input type="text" placeholder="Category" className="w-full border rounded p-2" required />
-                        <input type="number" placeholder="Price" className="w-full border rounded p-2" required />
-                        
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            className="w-full border rounded p-2"
+                            value={newItemName}
+                            onChange={(e) => setNewItemName(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="text"
+                            placeholder="Category"
+                            className="w-full border rounded p-2"
+                            value={newItemCategory}
+                            onChange={(e) => setNewItemCategory(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="number"
+                            placeholder="Price"
+                            className="w-full border rounded p-2"
+                            value={newItemPrice}
+                            onChange={(e) => setNewItemPrice(e.target.value)}
+                            required
+                        />
+
                         {/* Ingredients Field */}
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Ingredients (comma-separated)</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Ingredients (comma-separated)
+                            </label>
                             <input
                                 type="text"
                                 className="w-full border border-gray-300 rounded-lg p-2"
-                                placeholder="e.g. Milk, Tapioca Pearls, Black Tea"
+                                placeholder="e.g. 1, 2, 3"
                                 value={ingredientString}
                                 onChange={(e) => setIngredientString(e.target.value)}
                             />
                         </div>
 
                         <div className="flex justify-end gap-2">
-                            <button type="button" onClick={() => setShowAddModal(false)} className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded">
+                            <button
+                                type="button"
+                                onClick={() => setShowAddModal(false)}
+                                className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
+                            >
                                 Cancel
                             </button>
-                            <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded">
+                            <button
+                                type="submit"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded"
+                            >
                                 Add
                             </button>
                         </div>

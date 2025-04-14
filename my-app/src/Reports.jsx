@@ -15,6 +15,10 @@ function Reports(){
     const [inventoryUsage, setInventoryUsage] = useState([]);
     const [timeframe, setTimeframe] = useState('week');
 
+    const [xReport, setXReport] = useState([]);
+    const [zReport, setZReport] = useState([]);
+
+
 
     /**
      * Navigation items for the sidebar menu.
@@ -34,19 +38,42 @@ function Reports(){
         const fetchInventoryUsage = async () => {
             try {
                 const res = await axios.get(`http://localhost:10000/manager/inventory-usage?timeframe=${timeframe}`);
-                console.log('Inventory Usage Response:', res.data);
-                setInventoryUsage(Array.isArray(res.data) ? res.data : []); // guard fallback
+                setInventoryUsage(Array.isArray(res.data) ? res.data : []);
             } catch (error) {
                 console.error('Error fetching inventory usage:', error);
-
-                setInventoryUsage([]); // fallback to avoid map error
+                setInventoryUsage([]);
+            }
+        };
+    
+        const fetchXReport = async () => {
+            try {
+                const res = await axios.get('http://localhost:10000/manager/reports/x');
+                setXReport(Array.isArray(res.data) ? res.data : []);
+            } catch (error) {
+                console.error('Error fetching X report:', error);
+                setXReport([]);
+            }
+        };
+    
+        const fetchZReport = async () => {
+            try {
+                const res = await axios.get('http://localhost:10000/manager/reports/z');
+                setZReport(Array.isArray(res.data) ? res.data : []);
+            } catch (error) {
+                console.error('Error fetching Z report:', error);
+                setZReport([]);
             }
         };
     
         if (selectedReport === 'inventory') {
             fetchInventoryUsage();
+        } else if (selectedReport === 'x') {
+            fetchXReport();
+        } else if (selectedReport === 'z') {
+            fetchZReport();
         }
     }, [selectedReport, timeframe]);
+    
 
     console.log('Inventory Usage:', inventoryUsage);
 
@@ -156,6 +183,66 @@ function Reports(){
                     </table>
                 </div>
             )}
+
+{selectedReport === 'x' && (
+    <div>
+        <h2 className="text-xl font-semibold mb-4">X Report (Hourly Sales)</h2>
+        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <thead className="bg-gray-200">
+                <tr>
+                    <th className="text-left px-6 py-3">Hour</th>
+                    <th className="text-left px-6 py-3">Total Sales ($)</th>
+                    <th className="text-left px-6 py-3">Cash Sales ($)</th>
+                    <th className="text-left px-6 py-3">Credit Sales ($)</th>
+                    <th className="text-left px-6 py-3">Reward Points</th>
+                    <th className="text-left px-6 py-3"># of Sales</th>
+                </tr>
+            </thead>
+            <tbody>
+                {xReport.map((item, idx) => (
+                    <tr key={idx} className="border-t">
+                        <td className="px-6 py-4">{new Date(item.hour).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                        <td className="px-6 py-4">${parseFloat(item.sales).toFixed(2)}</td>
+                        <td className="px-6 py-4">${parseFloat(item.cash_sales).toFixed(2)}</td>
+                        <td className="px-6 py-4">${parseFloat(item.credit_sales).toFixed(2)}</td>
+                        <td className="px-6 py-4">{item.total_reward_points}</td>
+                        <td className="px-6 py-4">{item.number_of_sales}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    </div>
+)}
+
+
+{selectedReport === 'z' && (
+    <div>
+        <h2 className="text-xl font-semibold mb-4">Z Report (Daily Summary)</h2>
+        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <thead className="bg-gray-200">
+                <tr>
+                    <th className="text-left px-6 py-3">Total Sales ($)</th>
+                    <th className="text-left px-6 py-3">Cash Sales ($)</th>
+                    <th className="text-left px-6 py-3">Credit Sales ($)</th>
+                    <th className="text-left px-6 py-3">Employee Signatures</th>
+                    <th className="text-left px-6 py-3">Tax Paid ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {zReport.length > 0 && (
+                    <tr className="border-t">
+                        <td className="px-6 py-4">${parseFloat(zReport[0].total_sales).toFixed(2)}</td>
+                        <td className="px-6 py-4">${parseFloat(zReport[0].total_cash).toFixed(2)}</td>
+                        <td className="px-6 py-4">${parseFloat(zReport[0].total_credit).toFixed(2)}</td>
+                        <td className="px-6 py-4">{zReport[0].employee_signatures}</td>
+                        <td className="px-6 py-4">${parseFloat(zReport[0].total_tax_paid).toFixed(2)}</td>
+                    </tr>
+                )}
+            </tbody>
+        </table>
+    </div>
+)}
+
     
             </div>
             </div>

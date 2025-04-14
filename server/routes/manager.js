@@ -210,12 +210,15 @@ router.get('/menu', async (req, res) => {
 // Add a menu item
 router.post('/menu', async (req, res) => {
     const { name, price, category } = req.body;
+    console.log('Incoming menu item:', req.body);
+
     try {
         const result = await pool.query(
             'INSERT INTO menu_items (name, price, total_purchases, category) VALUES ($1, $2, $3, $4) RETURNING *',
             [name, price, 0, category]
         );
         res.json(result.rows[0]);
+        
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -311,27 +314,36 @@ router.delete('/menu/ingredients/:id', async (req, res) => {
 
 //adds ingredient lists for menu_id with menu id
 router.post('/menu/ingredients/:id', async (req, res) => {
-    const { id } = req.params; // menu_id
-    const { inventory_ids } = req.body; // expecting an array of inventory_ids
-    // const inventory_ids = [6, 11, 1, 14];
+    const { id } = req.params;
+    const { inventory_names } = req.body;
 
-    if (!Array.isArray(inventory_ids) || inventory_ids.length === 0) {
-        return res.status(400).json({ error: 'inventory_ids must be a non-empty array' });
+    if (!Array.isArray(inventory_names) || inventory_names.length === 0) {
+        return res.status(400).json({ error: 'inventory_names must be a non-empty array' });
     }
 
-    
-    // Create the VALUES part dynamically, e.g., ($1, $2), ($1, $3), ...
-    const values = inventory_ids.map((_, index) => `($1, $${index + 2}, 1.00)`).join(', ');
-    
-    // First param is menu_id, followed by all inventory_ids
-    const params = [id, ...inventory_ids];
-
     try {
-        const result = await pool.query(
+        // 1. Lookup IDs from names
+        const resultIds = await pool.query(
+            `SELECT id FROM inventory_items WHERE name = ANY($1::text[])`,
+            [inventory_names]
+        );
+
+        const inventory_ids = resultIds.rows.map(row => row.id);
+
+        if (inventory_ids.length !== inventory_names.length) {
+            return res.status(400).json({ error: 'Some ingredient names were not found' });
+        }
+
+        // 2. Insert into junction table
+        const values = inventory_ids.map((_, index) => `($1, $${index + 2}, 1.00)`).join(', ');
+        const params = [id, ...inventory_ids];
+
+        const insertResult = await pool.query(
             `INSERT INTO junct_inventory_items (menu_id, inventory_id, quantity_used_per_menu_item) VALUES ${values} RETURNING *`,
             params
         );
-        res.status(201).json(result.rows);
+
+        res.status(201).json(insertResult.rows);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error', details: err.message });
