@@ -422,23 +422,13 @@ function Cashier () {
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
                         </svg>
                     </button>
-                    <div id="dropdownAvatarName" className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-                        <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                    <div id="dropdownAvatarName" className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 ">
+                        <div className="px-4 py-3 text-sm text-gray-900">
                         <div>{email}</div>
                         </div>
-                        <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
-                        <li>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                        </li>
-                        <li>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
-                        </li>
-                        </ul>
+                        
                         <div className="py-2">
-                        <a onClick = {handleLogout} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+                        <a onClick = {handleLogout} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
                         </div>
                     </div>
 
@@ -635,17 +625,17 @@ function Cashier () {
                         <div className="h-100 overflow-y-auto border border-emerald-900 rounded-3xl p-5 my-5">
                             { 
                                 (orderList.map((item, index) => (
-                                    <div key = {index} className='flex p-3 rounded-3xl border border-emerald-900 mb-5 justify-between'> 
+                                    <div key = {index} className='flex p-3 text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 mb-5 justify-between'> 
                                         <div>
                                             <img className = 'h-20 rounded mr-5' src={item.img}>
                                             </img>
                                         </div>
                                         
                                             <div className='flex flex-col'> 
-                                                <p className='font-bold text-emerald-900'>
+                                                <p className='font-bold'>
                                                     {item.name}
                                                 </p>
-                                                <div className='h-25 overflow-y-auto gap-2 border border-amber-500 rounded-3xl p-5 mt-5'>
+                                                <div className='h-25 overflow-y-auto gap-2 rounded-3xl p-5 mt-5'>
                                                     {item.toppings.map((topping) => (
                                                         <p>
                                                         {topping}
