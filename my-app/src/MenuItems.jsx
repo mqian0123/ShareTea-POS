@@ -5,6 +5,9 @@ import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, Plus } from 'luc
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const SERVER_API = import.meta.env.VITE_SERVER_API;
+
+
 function MenuItems() {
     const navigate = useNavigate();
     const [showConfirm, setShowConfirm] = useState(false);
@@ -31,7 +34,7 @@ function MenuItems() {
     useEffect(() => {
         const fetchMenuItems = async () => {
             try {
-                const response = await axios.get('http://localhost:10000/manager/menu');
+                const response = await axios.get(SERVER_API + 'manager/menu');
                 setMenuItem(response.data);
             } catch (error) {
                 console.error('Error fetching menu items:', error);
@@ -50,7 +53,7 @@ function MenuItems() {
 
     const confirmDelete = async () => {
         try {
-            await axios.delete('http://localhost:10000/manager/menu/' + pendingDeleteId);
+            await axios.delete(SERVER_API + 'manager/menu/' + pendingDeleteId);
             setMenuItem(menuItem.filter(item => item.menu_id !== pendingDeleteId));
         } catch (error) {
             console.error("Failed to delete menu item:", error);
@@ -77,7 +80,7 @@ function MenuItems() {
 
     const saveEditedMenuitem = async(updatedItem) => {
         try {
-            const response = await axios.patch("http://localhost:10000/manager/menu/" + updatedItem.menu_id, {
+            const response = await axios.patch(SERVER_API + "manager/menu/" + updatedItem.menu_id, {
                 name: updatedItem.name,
                 price: updatedItem.price,
                 total_purchases: updatedItem.total_purchases,
@@ -102,7 +105,7 @@ function MenuItems() {
         try {
             // 1. Add the menu item
             console.log("Trying");
-            const menuRes = await axios.post('http://localhost:10000/menu', {
+            const menuRes = await axios.post(SERVER_API + 'menu', {
                 name: newItemName,
                 price: newItemPrice,
                 category: newItemCategory,
@@ -113,7 +116,7 @@ function MenuItems() {
     
             // 2. Add the ingredients using the menu item ID
             if (newItemIngredients.length > 0) {
-                await axios.post(`http://localhost:10000/menu/ingredients/${menuItemId}`, {
+                await axios.post(SERVER_API + `menu/ingredients/${menuItemId}`, {
                     inventory_names: newItemIngredients,
                 });
             }

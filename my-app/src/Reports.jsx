@@ -5,9 +5,7 @@ import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, PackagePlus } fr
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-
-
-
+const SERVER_API = import.meta.env.VITE_SERVER_API
 
 function Reports(){
     const navigate = useNavigate();
@@ -37,7 +35,7 @@ function Reports(){
     useEffect(() => {
         const fetchInventoryUsage = async () => {
             try {
-                const res = await axios.get(`http://localhost:10000/manager/inventory-usage?timeframe=${timeframe}`);
+                const res = await axios.get(SERVER_API + `manager/inventory-usage?timeframe=${timeframe}`);
                 setInventoryUsage(Array.isArray(res.data) ? res.data : []);
             } catch (error) {
                 console.error('Error fetching inventory usage:', error);
@@ -47,7 +45,7 @@ function Reports(){
     
         const fetchXReport = async () => {
             try {
-                const res = await axios.get('http://localhost:10000/manager/reports/x');
+                const res = await axios.get(SERVER_API + 'manager/reports/x');
                 setXReport(Array.isArray(res.data) ? res.data : []);
             } catch (error) {
                 console.error('Error fetching X report:', error);
@@ -57,7 +55,7 @@ function Reports(){
     
         const fetchZReport = async () => {
             try {
-                const res = await axios.get('http://localhost:10000/manager/reports/z');
+                const res = await axios.get(SERVER_API + 'manager/reports/z');
                 setZReport(Array.isArray(res.data) ? res.data : []);
             } catch (error) {
                 console.error('Error fetching Z report:', error);

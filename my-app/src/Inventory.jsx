@@ -5,6 +5,8 @@ import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, PackagePlus } fr
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const SERVER_API = import.meta.env.VITE_SERVER_API;
+
 /**
  * 
  * @description Creates the inventory page for the manager GUI
@@ -38,7 +40,7 @@ function Inventory() {
     useEffect(() => {
         const fetchInventoryItems = async () => {
             try {
-                const response = await axios.get('http://localhost:10000/manager/inventory');
+                const response = await axios.get(SERVER_API + 'manager/inventory');
                 setInventoryItem(response.data);
             } catch (error) {
                 console.error('Error fetching inventory items:', error);
@@ -58,7 +60,7 @@ function Inventory() {
     const confirmDelete = async () => {
         
         try {
-            await axios.delete('http://localhost:10000/manager/inventory/' + pendingDeleteId);
+            await axios.delete(SERVER_API + 'manager/inventory/' + pendingDeleteId);
             setInventoryItem(inventoryItem.filter(item => item.inventory_id !== pendingDeleteId));
         } catch (error) {
             console.error("Failed to delete inventory item:", error);
@@ -95,12 +97,12 @@ function Inventory() {
             return;
         }
         try {
-            await axios.post('http://localhost:10000/manager/inventory', {
+            await axios.post(SERVER_API + 'manager/inventory', {
                 name: newItemName,
                 quantity: qty
             });
             // Refresh the inventory list
-            const refreshed = await axios.get('http://localhost:10000/manager/inventory');
+            const refreshed = await axios.get(SERVER_API + 'manager/inventory');
             setInventoryItem(refreshed.data);
 
             setShowAdd(false);
@@ -255,8 +257,8 @@ function Inventory() {
                             return;
                         }
                         try {
-                            await axios.patch(`http://localhost:10000/manager/inventory/${selectedInventoryItem.inventory_id}`, { quantity: qty });
-                            const refreshed = await axios.get('http://localhost:10000/manager/inventory');
+                            await axios.patch(SERVER_API + `manager/inventory/${selectedInventoryItem.inventory_id}`, { quantity: qty });
+                            const refreshed = await axios.get(SERVER_API + 'manager/inventory');
                             setInventoryItem(refreshed.data);
                     
                         } catch (error) {
