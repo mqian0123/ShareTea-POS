@@ -1,5 +1,34 @@
-#bg{
-    background-color: aqua;
-    width: 100vw;
+.bg{
+    background-image: url('./assets/bubble+tea+five.jpg');
+    background-size: cover;
+    background-position: center;
     height: 100vh;
+    align-items: center;
+}
+
+.animate-bounce{
+    animation: var(--animate-bounce); /* bounce 1s infinite */
+    @keyframes bounce {
+    0%, 100% {
+        transform: translateY(-25%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+        transform: none;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+}
+
+.fade-in {
+    animation: fadeIn 2s ease-in forwards;
 }

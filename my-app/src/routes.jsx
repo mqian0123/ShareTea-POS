@@ -8,6 +8,7 @@ import Inventory from "./Inventory";
 import Login from "./Login";
 import Reports from "./Reports";
 import KioskLogin from "./KioskLogin";
+import KioskMenu from "./KioskMenu";
 
 /**
  * AppRoutes Component
@@ -42,6 +43,9 @@ function AppRoutes() {
       <Route path="/manager/reports" element={<Reports />} />
 
       <Route path = "/kioskLogin" element={<KioskLogin/>} />
+
+      <Route path = "/kioskMenu" element={<KioskMenu/>} />
+
     </Routes>
   );
 }
