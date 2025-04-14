@@ -57,7 +57,7 @@ function Home() {
 
                     {/* Button to navigate to the Customer Kiosk */}
                     <button
-                        onClick={() => navigate("/kiosk")}
+                        onClick={() => navigate("/kioskLogin")}
                         className="btn-kiosk hover:cursor-pointer py-10 text-2xl font-semibold text-white rounded-2xl shadow-md transition"
                     >
                         Customer Kiosk
