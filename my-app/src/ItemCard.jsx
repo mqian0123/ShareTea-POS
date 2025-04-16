@@ -88,8 +88,6 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
                                     )
                                     
                                 ) : (
-
-
                                     isModalOpen && (
                                             <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID}>
                                             </Modal>
