@@ -112,8 +112,23 @@ router.get('/addCustomer', async (req, res) => {
 
 });
 
+router.post('/updateCustomer', async (req, res) => {
+  try {
+    const { phoneNumber, pointsUsed } = req.body;
+    if (!phoneNumber) {
+      return res.status(400).json({ error: 'Phone number is required' });
+    }
+    await pool.query('UPDATE customers SET total_reward_points = total_reward_points - $1 WHERE phone_number = $2',
+      [pointsUsed, phoneNumber]);
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 
-// add order
+});
+
+// addOrder
 router.post('/addOrder', async (req, res) => {
     const { time, payment, points, cost, customerID, employeeID, orderList } = req.body;
     let orderID = -1;
