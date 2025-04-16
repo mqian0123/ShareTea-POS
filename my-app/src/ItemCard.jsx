@@ -30,7 +30,7 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
     };
 
         return (
-            <div className="w-full max-w-sm bg-white border border-emerald-800 rounded-lg shadow-sm ">
+            <div className="w-full max-w-sm bg-white border-2 border-[#FFD700] rounded-lg shadow-sm">
 
                 {/* Item Image  */}
                 <a href="#">
@@ -71,7 +71,29 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
                         <span className="text-3xl font-bold text-gray-900">${itemPrice}</span>
                         <button 
                             onClick={handleOpenModal}
-                            className="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-lime-300 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            className="text-white 
+               bg-gradient-to-r 
+               from-[#FFD700] 
+               via-[#FFC107] 
+               to-[#FFB300] 
+               hover:bg-gradient-to-br 
+               hover:brightness-110 
+               focus:ring-4 
+               focus:outline-none 
+               focus:ring-yellow-300 
+               dark:focus:ring-yellow-800 
+               shadow-lg 
+               shadow-yellow-500/50 
+               dark:shadow-lg 
+               dark:shadow-yellow-800/80 
+               font-medium 
+               rounded-lg 
+               text-sm 
+               px-5 
+               py-2.5 
+               text-center 
+               me-2 
+               mb-2"
                             type="button"> 
                             +
                         </button>
@@ -88,8 +110,6 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
                                     )
                                     
                                 ) : (
-
-
                                     isModalOpen && (
                                             <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID}>
                                             </Modal>
