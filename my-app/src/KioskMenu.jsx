@@ -121,7 +121,7 @@ function KioskMenu () {
         const [searchTerm, setSearchTerm] = useState('');
         const [orderList, setOrderList] = useState(() => {
             // Initialize from cookie if it exists, otherwise empty array
-            const savedOrderList = getCookie('orderList');
+            const savedOrderList = getCookie('kioskOrderList');
             return savedOrderList || [];
         });
     
@@ -358,7 +358,7 @@ function KioskMenu () {
     
         // Add this useEffect to save to cookie whenever orderList changes
         useEffect(() => {
-            setCookie("orderList", orderList);
+            setCookie("kioskOrderList", orderList);
         }, [orderList]);
     
         useEffect(() => {
@@ -392,6 +392,14 @@ function KioskMenu () {
         const closeCartModal = () => {
             setCartModalOpen(false);
         }
+
+        const calculateTotalQuantity = () => {
+            let sum = 0;
+            for (let index = 0; index < orderList.length; index++) {
+                sum += orderList[index].quantity;
+            }
+            return sum;
+        }
     
         return (
             <div className = "flex flex-col bg-amber-50">
@@ -410,15 +418,19 @@ function KioskMenu () {
                         <svg class="w-3.5 h-3.5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
                         <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z"/>
                         </svg>
-                        <p>{orderList.length}</p>
+                        <p>{calculateTotalQuantity()}</p>
                     </button>
                     {
                         isCartModalOpen && (
-                            <CartModal onClose = {closeCartModal}>
+                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem}>
 
                             </CartModal>
                         )
                     }
+                    <div id="google_translate_element" >
+
+                    </div>
+
                     <div className = "flex items-center">
                         {/* Dropdown Avatar Menu */}
                         <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" className="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full md:me-0 focus:ring-4 focus:ring-gray-100 bg-white p-3" type="button">
@@ -438,8 +450,8 @@ function KioskMenu () {
                             <a onClick = {handleLogout} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
                             </div>
                         </div>
-    
                     </div>
+
                 </div>
     
                 {/* Main Content */}
@@ -474,6 +486,7 @@ function KioskMenu () {
                                     onClick = {() => setSelectedCategory(category.name)}
                                     status = {category.status} 
                                     categoryName = {category.name === null ? "All" : category.name}
+                                    menuList = {menuItems}
                                     className={`rounded-full cursor-pointer py-5 ${
                                         selectedCategory === category.name 
                                         ? 'hover:cursor-pointer w-auto m-5 inline-block border  py-4 pr-20 pl-5 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 bg-red-600 text-white' 

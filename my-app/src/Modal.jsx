@@ -49,7 +49,7 @@ function Modal({itemName, itemPrice, img, onClose, addToOrder, menuID}) {
 
         return (
             <>
-                <div id="static-modal" data-modal-backdrop="static" tabIndex="-1" aria-hidden="true" className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div id="static-modal" data-modal-backdrop="static" tabIndex="-1" aria-hidden="true" className="overflow-y-auto overflow-x-hidden fixed flex z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                     <div className="relative p-4 w-full max-w-2xl max-h-full">
                         <div className="relative text-gray-900 bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-100 dark:focus:ring-red-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 ">
 
@@ -68,7 +68,7 @@ function Modal({itemName, itemPrice, img, onClose, addToOrder, menuID}) {
                             {/* Ice Level Div */}
                             <div className="p-4 md:p-5 space-y-4">
                                 <h3 className="mb-4 font-semibold">Ice Level</h3>
-                                <ul className="items-center w-full text-sm text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 sm:flex ">
+                                <ul className="items-center w-full text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 sm:flex ">
                                     <li className="w-full border-b border-gray-200 sm:border-b-0 dark:border-gray-600">
                                         <div className="flex items-center ps-3">
                                             <input onChange= {handleRadioChange2} id="No Ice" type="radio" value="No Ice" name="list-radio-2" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" />
