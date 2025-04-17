@@ -5,6 +5,7 @@ import shareTeaLogo from './assets/Sharetea+logo.avif'
 import { useNavigate } from 'react-router-dom';
 import PhoneModal from './PhoneModal';
 import { useState } from 'react';
+import GoogleTranslate from './GoogleTranslate';
 
 function KioskLogin () {
 
@@ -51,8 +52,9 @@ function KioskLogin () {
                         <PhoneModal onClose = {ClosePhoneLogin}>
                         </PhoneModal>
                     )
-                            
+
                 }
+                <GoogleTranslate></GoogleTranslate>
                 <button className = "hover:cursor-pointer hover:-translate-y-0.5 border bg-white rounded shadow-md border-gray-100 font-bold flex items-center justify-center">
                     <img src={accessiblityIcon} className='w-20'>
                     </img>

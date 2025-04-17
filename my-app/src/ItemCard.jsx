@@ -17,7 +17,7 @@ import CustomModal from "./CustomModal.jsx";
  * @author Seshadithya Saravanan
  */
 
-function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
+function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID, points=null}) {
 
     // State to track whether the modal for the toppings selection is open
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -98,20 +98,24 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
                             +
                         </button>
                     </div>
-                    
+                    {
+                            points !== null && (
+                                <span>{points} points</span>
+                            )
+                        }
                     {/* Conditionally rendering the toppings modal based on the type of drink and if the user clicked on the add to cart button 
                         //TODO: Center the modal
                     */}
                         {   
                                 isSpecial ? (
                                     isModalOpen && (
-                                        <CustomModal itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID}>
+                                        <CustomModal itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID} points={points}>
                                         </CustomModal>
                                     )
                                     
                                 ) : (
                                     isModalOpen && (
-                                            <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID}>
+                                            <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID} points={points}>
                                             </Modal>
                                     )
                                 )

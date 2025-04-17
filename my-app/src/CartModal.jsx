@@ -1,7 +1,31 @@
 import './Modal.css';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
-function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, deleteItem, calculateTotal, }) {
+function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, deleteItem, calculateTotal}) {
+
+    const [applyDiscount, setApplyDiscount] = useState(false);
+    const [finalPrice, setFinalPrice] = useState(0);
+
+    const subtotal = calculateTotal();
+    const tax = (subtotal*0.05);
+    // setFinalPrice(subtotal+tax);
+    const userPoints = 700;
+
+
+    useEffect(() => {
+        if (applyDiscount) {
+            setFinalPrice((subtotal + tax - userPoints / 100).toFixed(2));
+        } else {
+            setFinalPrice((subtotal + tax).toFixed(2));
+        }
+    }, [subtotal, tax, applyDiscount]);
+
+    const handleApplyDiscount = () => {
+        setApplyDiscount(!applyDiscount);
+    };
+
+
+
     return (
         <>
                 <div id="static-modal" data-modal-backdrop="static" tabIndex="-1" aria-hidden="true" className="overflow-y-auto overflow-x-hidden fixed flex z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -20,7 +44,6 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
                                     <span className="sr-only">Close modal</span>
                                 </button>
                             </div>
-
                             {/* Order List */}
                             <div className=''>
                                 {
@@ -30,7 +53,6 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
                                             <img className = 'h-20 rounded mr-5' src={item.img}>
                                             </img>
                                         </div>
-                                        
                                             <div className='flex flex-col'> 
                                                 <p className='font-bold'>
                                                     {item.name}
@@ -52,10 +74,12 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
                                                 </div>
                                                 
                                             </div>
-
                                             <div className='flex flex-col justify-end'>
                                                 <p className='font-bold'>
                                                     ${item.total} 
+                                                </p>
+                                                <p>
+                                                    {item.points} (points)
                                                 </p>
                                                 <form className="max-w-xs mx-auto">
                                                     <div className="relative flex items-center">
@@ -94,6 +118,14 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
                                     Apply
                                 </button>
                             </div>
+
+                            <div className='flex justify-between py-2.5 items-center'>
+                                <p className='font-bold'>
+                                    Use Reward Points
+                                </p>
+                                <input type='checkbox' onChange={handleApplyDiscount}>
+                                </input>
+                            </div>
                             
                             <hr>
                             </hr>
@@ -105,7 +137,7 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
                                     Subtotal
                                 </p>
                                 <p className='font-bold'>
-                                    ${calculateTotal().toFixed(2)}
+                                    ${subtotal}
                                 </p>
                             </div>
                             <div className='flex justify-between py-2.5'>
@@ -113,17 +145,33 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
                                     Tax
                                 </p>
                                 <p className='font-bold'>
-                                    ${(calculateTotal()*0.05).toFixed(2)}
+                                    ${tax.toPrecision(2)}
                                 </p>
                             </div>
                             <hr>
                             </hr>
+                            {
+                                applyDiscount && (
+                                    <>
+                                        <div className='flex justify-between py-2.5'>
+                                            <p>
+                                                Rewards Applied
+                                            </p>
+                                            <p className='font-bold'>
+                                                -${(userPoints/100).toFixed(2)}
+                                            </p>
+                                        </div>
+                                        <hr>
+                                        </hr>
+                                    </>
+                            )
+                            }
                             <div className='flex justify-between py-2.5'>
                                 <p>
                                     Total
                                 </p>
                                 <p className='font-bold'>
-                                    ${(calculateTotal() + calculateTotal()*0.05).toFixed(2)}
+                                    ${finalPrice}
                                 </p>
                             </div>
                             <div class="text-white bg-[#050708] hover:bg-[#050708]/80 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#050708]/40 dark:focus:ring-gray-600 me-2 mb-2">

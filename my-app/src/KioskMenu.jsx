@@ -100,18 +100,18 @@ function KioskMenu () {
         const [customerID, setCustomerID] = useState(1);
     
         useEffect(() => {
-          const fetchEmployeeID = async () => {
-            try {
-              const response = await axios.get(SERVER_API + "cashier/employee", {
-                params: { email: email }
-              });
-                setEmployeeID(response.data[0]['employee_id'])
-            } catch (error) {
-              console.error('Error fetching employee ID:', error);
-            }
-          };
-      
-          fetchEmployeeID();
+            const fetchEmployeeID = async () => {
+                try {
+                const response = await axios.get(SERVER_API + "cashier/employee", {
+                    params: { email: email }
+                });
+                    setEmployeeID(response.data[0]['employee_id'])
+                } catch (error) {
+                console.error('Error fetching employee ID:', error);
+                }
+            };
+        
+            fetchEmployeeID();
         }, []); // [] ensures it runs only once on mount
     
         // navigate hook to navigate to different pages
@@ -188,30 +188,30 @@ function KioskMenu () {
         
         useEffect(() => {
             if (phoneNumber) {
-              fetchCustomerID();
-            }
-          }, [phoneNumber]);
+                fetchCustomerID();
+                }
+            }, [phoneNumber]);
         // State hook for the current order type
         // const [currentOrderType, setOrderType] = useState("");
         // Menu items
         const menuItems = [
-            { name: "Wintermelon Lemonade", price: 7.00, img: wintermelonLemonade, isSpecial: false, categoryName: "Fruit Tea", menuID:55},
-            { name: "Strawberry Tea", price: 5.00, img: strawberryTea, isSpecial: false, categoryName: "Fruit Tea", menuID:  56},
-            { name: "Honey Lemonade with Aloe Vera", price: 7.50, img: honeyLemonade, isSpecial: false, categoryName: "Fruit Tea", menuID: 57 },
-            { name: "Classic Pearl Milk Tea", price: 9.00, img: classicPearlMilkTea, isSpecial: true, categoryName: "Milk Tea", menuID: 50},
-            { name: "Coffee Milk Tea", price: 10.00, img: coffeeMilkTea, isSpecial: false, categoryName: "Milk Tea", menuID: 48},
-            { name: "Honey Milk Tea", price: 9.00, img: honeyMilkTea, isSpecial: true, categoryName: "Milk Tea", menuID:  49},
-            { name: "Mango Green Milk Tea", price: 10.00, img: mangoGreenMilkTea, isSpecial: false, categoryName: "Milk Tea", menuID: 51},
-            { name: "Classic Tea", price: 10.00, img: classicTea, isSpecial: true, categoryName: "Brewed Tea", menuID: 52},
-            { name: "Honey Tea", price: 9.00, img: honeyTea, isSpecial: true, categoryName: "Brewed Tea", menuID: 54},
-            { name: "Wintermelon Tea", price: 10.00, img: wintermelonTea, isSpecial: false, categoryName: "Brewed Tea", menuID: 53},
-            { name: "Milk Tea Ice Blended with Pearl", price: 10.00, img: milkIceBlended, isSpecial: false, categoryName: "Ice Blended", menuID: 59},
-            { name: "Mango Ice Blended with Ice Cream", price: 9.00, img: mangoIceBlended, isSpecial: false, categoryName: "Ice Blended", menuID:  60},
-            { name: "Oreo Ice Blended with Pearl", price: 10.00, img: oreoIceBlended, isSpecial: false, categoryName: "Ice Blended", menuID:58 },
-            { name: "Lime Mojito", price: 10.00, img: limeMojito, isSpecial: false, categoryName: "Tea Mojito", menuID: 61},
-            { name: "Mango Mojito", price: 9.00, img: mangoMojito, isSpecial: false, categoryName: "Tea Mojito", menuID:  62},
-            { name: "Strawberry Mojito", price: 10.00, img: strawberryMojito, isSpecial: false, categoryName: "Tea Mojito", menuID: 63},
-            { name: "Wintermelon Creama", price: 10.00, img: wintermelonCreama, isSpecial: false, categoryName: "Creama", menuID: 74},
+            { name: "Wintermelon Lemonade", price: 7.00, img: wintermelonLemonade, isSpecial: false, categoryName: "Fruit Tea", menuID:55, points:700},
+            { name: "Strawberry Tea", price: 5.00, img: strawberryTea, isSpecial: false, categoryName: "Fruit Tea", menuID:  56, points: 500},
+            { name: "Honey Lemonade with Aloe Vera", price: 7.50, img: honeyLemonade, isSpecial: false, categoryName: "Fruit Tea", menuID: 57, points: 750 },
+            { name: "Classic Pearl Milk Tea", price: 9.00, img: classicPearlMilkTea, isSpecial: true, categoryName: "Milk Tea", menuID: 50, points: 900},
+            { name: "Coffee Milk Tea", price: 10.00, img: coffeeMilkTea, isSpecial: false, categoryName: "Milk Tea", menuID: 48, points: 1000},
+            { name: "Honey Milk Tea", price: 9.00, img: honeyMilkTea, isSpecial: true, categoryName: "Milk Tea", menuID:  49, points: 900},
+            { name: "Mango Green Milk Tea", price: 10.00, img: mangoGreenMilkTea, isSpecial: false, categoryName: "Milk Tea", menuID: 51, points: 1000},
+            { name: "Classic Tea", price: 10.00, img: classicTea, isSpecial: true, categoryName: "Brewed Tea", menuID: 52, points: 900},
+            { name: "Honey Tea", price: 9.00, img: honeyTea, isSpecial: true, categoryName: "Brewed Tea", menuID: 54, points: 900},
+            { name: "Wintermelon Tea", price: 10.00, img: wintermelonTea, isSpecial: false, categoryName: "Brewed Tea", menuID: 53, points: 1000},
+            { name: "Milk Tea Ice Blended with Pearl", price: 10.00, img: milkIceBlended, isSpecial: false, categoryName: "Ice Blended", menuID: 59, points: 1000},
+            { name: "Mango Ice Blended with Ice Cream", price: 9.00, img: mangoIceBlended, isSpecial: false, categoryName: "Ice Blended", menuID:  60, points: 900},
+            { name: "Oreo Ice Blended with Pearl", price: 10.00, img: oreoIceBlended, isSpecial: false, categoryName: "Ice Blended", menuID:58, points: 1000 },
+            { name: "Lime Mojito", price: 10.00, img: limeMojito, isSpecial: false, categoryName: "Tea Mojito", menuID: 61, points: 1000},
+            { name: "Mango Mojito", price: 9.00, img: mangoMojito, isSpecial: false, categoryName: "Tea Mojito", menuID:  62, points: 900},
+            { name: "Strawberry Mojito", price: 10.00, img: strawberryMojito, isSpecial: false, categoryName: "Tea Mojito", menuID: 63, points: 1000},
+            { name: "Wintermelon Creama", price: 10.00, img: wintermelonCreama, isSpecial: false, categoryName: "Creama", menuID: 74, points: 1000},
     
         ]
     
@@ -424,7 +424,6 @@ function KioskMenu () {
                     {
                         isCartModalOpen && (
                             <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal}>
-
                             </CartModal>
                         )
                     }

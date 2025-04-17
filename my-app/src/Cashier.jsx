@@ -763,4 +763,6 @@ function Cashier () {
     )
 }
 
+
+
 export default Cashier
