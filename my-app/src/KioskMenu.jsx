@@ -37,6 +37,7 @@ import { useLocation } from 'react-router-dom';
 import Weather from './Weather.jsx';
 import shareTeaLogo from './assets/Sharetea+logo.avif'
 import CartModal from './CartModal.jsx'
+import GoogleTranslate from './GoogleTranslate.jsx'
 
 const SERVER_API = import.meta.env.VITE_SERVER_API;
 
@@ -427,9 +428,7 @@ function KioskMenu () {
                             </CartModal>
                         )
                     }
-                    <div id="google_translate_element" >
-
-                    </div>
+                    <GoogleTranslate/>
 
                     <div className = "flex items-center">
                         {/* Dropdown Avatar Menu */}
