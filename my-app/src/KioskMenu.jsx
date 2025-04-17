@@ -422,7 +422,7 @@ function KioskMenu () {
                     </button>
                     {
                         isCartModalOpen && (
-                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem}>
+                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal}>
 
                             </CartModal>
                         )

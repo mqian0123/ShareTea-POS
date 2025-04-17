@@ -9,6 +9,7 @@ import Login from "./Login";
 import Reports from "./Reports";
 import KioskLogin from "./KioskLogin";
 import KioskMenu from "./KioskMenu";
+import RewardsMenu from "./RewardsMenu";
 
 /**
  * AppRoutes Component
@@ -46,6 +47,7 @@ function AppRoutes() {
 
       <Route path = "/kioskMenu" element={<KioskMenu/>} />
 
+      <Route path = "/rewardsMenu" element={<RewardsMenu />}/>
     </Routes>
   );
 }
