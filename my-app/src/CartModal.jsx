@@ -1,7 +1,7 @@
 import './Modal.css';
 import {useState, useEffect} from 'react';
 
-function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, deleteItem, calculateTotal}) {
+function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, deleteItem, calculateTotal, totalPoints}) {
 
     const [applyDiscount, setApplyDiscount] = useState(false);
     const [finalPrice, setFinalPrice] = useState(0);
@@ -9,8 +9,7 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
     const subtotal = calculateTotal();
     const tax = (subtotal*0.05);
     // setFinalPrice(subtotal+tax);
-    const userPoints = 700;
-
+    const userPoints = totalPoints;
 
     useEffect(() => {
         if (applyDiscount) {

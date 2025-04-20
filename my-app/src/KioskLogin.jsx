@@ -14,7 +14,6 @@ function KioskLogin () {
     const [isPhoneLoginOpen, setPhoneLoginOpen] = useState(false);
 
     const OpenPhoneLogin = () => {
-        console.log("opening this shit");
         setPhoneLoginOpen(true);
     }
 
