@@ -210,7 +210,6 @@ router.get('/menu', async (req, res) => {
 // Add a menu item
 router.post('/menu', async (req, res) => {
     const { name, price, category } = req.body;
-    console.log('Incoming menu item:', req.body);
 
     try {
         const result = await pool.query(
@@ -324,9 +323,10 @@ router.post('/menu/ingredients/:id', async (req, res) => {
     try {
         // 1. Lookup IDs from names
         const resultIds = await pool.query(
-            `SELECT id FROM inventory_items WHERE name = ANY($1::text[])`,
+            `SELECT inventory_id FROM inventory WHERE name = ANY($1::text[])`,
             [inventory_names]
         );
+        
 
         const inventory_ids = resultIds.rows.map(row => row.id);
 
