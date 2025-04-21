@@ -747,7 +747,7 @@ function Cashier () {
                                     {     
                                     time: new Date(),
                                     payment: paymentMethod,
-                                    points: Math.floor(calculateTotal() * 10),
+                                    points: Math.floor(calculateTotal() * 100), // $1 = 100 points
                                     cost: calculateTotal(),
                                     customerID: customerID,
                                     employeeID: employeeID,
