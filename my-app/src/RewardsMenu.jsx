@@ -408,7 +408,7 @@ function RewardsMenu () {
                     </button>
                     {
                         isCartModalOpen && (
-                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} totalPoints={userPoints}>
+                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} totalPoints={userPoints} customerID={customerID}>
                             </CartModal>
                         )
                     }
