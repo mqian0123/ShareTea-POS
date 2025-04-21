@@ -128,7 +128,7 @@ function PhoneModal ({onClose}) {
                                 id="phone"
                                 name="phone"
                                 type="tel"
-                                pattern="\(\d{3}\)-\d{3}-\d{4}"
+                                pattern="\(\d{3}\) \d{3}-\d{4}"
                                 inputmode="numeric"
                                 placeholder="(123)-456-7890"
                                 required
@@ -138,7 +138,7 @@ function PhoneModal ({onClose}) {
                                 onChange={e => setPhoneNumber(e.target.value)}
                             />
                             {isVisible && <p class="mt-1 text-sm text-red-600 hidden peer-invalid:block">
-                                Please enter a valid phone number in the format (123)-456-7890.
+                                Please enter a valid phone number in the format (123) 456-7890.
                             </p>}
                             <button
                                 type="submit"
