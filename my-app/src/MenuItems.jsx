@@ -17,6 +17,22 @@ function MenuItems() {
     const [editItemData, setEditItemData] = useState(null);
     const [ingredientString, setIngredientString] = useState('');
 
+    const [inventoryItems, setInventoryItems] = useState([]);
+
+    useEffect(() => {
+        const fetchInventory = async () => {
+            try {
+                const res = await axios.get(SERVER_API + 'manager/inventory');
+                setInventoryItems(res.data);
+            } catch (err) {
+                console.error("Error fetching inventory:", err);
+            }
+        };
+        fetchInventory();
+    }, []);
+
+    
+
 
 
     const [newItemName, setNewItemName] = useState('');
@@ -74,62 +90,68 @@ function MenuItems() {
     
     const handleEdit = (id) => {
         const itemToEdit = menuItem.find(item => item.menu_id === id);
-        saveEditedMenuitem(itemToEdit);
+        setEditItemData(itemToEdit);
         setShowEditModal(true);
     };
-
-    const saveEditedMenuitem = async(updatedItem) => {
-        try {
-            const response = await axios.patch(SERVER_API + "manager/menu/" + updatedItem.menu_id, {
-                name: updatedItem.name,
-                price: updatedItem.price,
-                total_purchases: updatedItem.total_purchases,
-                category: updatedItem.category
-            })
-
-            const updatedData = response.data;
     
-            // Update local state
+
+    const saveEditedMenuitem = async (updatedItem) => {
+        try {
+            await axios.patch(`${SERVER_API}manager/menu/${updatedItem.menu_id}`, {
+                name: updatedItem.name,
+                category: updatedItem.category,
+                price: updatedItem.price
+            });
             setMenuItem(prev =>
-                prev.map(menu =>
-                    menu.menu_id === updatedData.menu_id ? updatedData : menu
+                prev.map(item =>
+                    item.menu_id === updatedItem.menu_id ? { ...item, ...updatedItem } : item
                 )
             );
+            setShowEditModal(false);
+            setEditItemData(null);
         } catch (error) {
             console.error('Failed to update menu item:', error);
         }
     };
+    
 
     const handleAddItem = async () => {
-        console.log("Recieved");
         try {
             // 1. Add the menu item
-            console.log("Trying");
-            const menuRes = await axios.post(SERVER_API + 'menu', {
+            const newItem = {
                 name: newItemName,
-                price: newItemPrice,
-                category: newItemCategory,
-            });
+                price: parseFloat(newItemPrice),
+                category: newItemCategory
+            };
     
-            console.log("Posted item");
-            const menuItemId = menuRes.data.id;
+            const res = await axios.post(SERVER_API + 'manager/menu', newItem);
+            const newMenuItem = res.data;
     
-            // 2. Add the ingredients using the menu item ID
+            // 2. Attach ingredients by name
             if (newItemIngredients.length > 0) {
-                await axios.post(SERVER_API + `menu/ingredients/${menuItemId}`, {
-                    inventory_names: newItemIngredients,
+                const ingredientNames = inventoryItems
+                    .filter(item => newItemIngredients.includes(item.inventory_id))
+                    .map(item => item.name);
+    
+                await axios.post(`${SERVER_API}manager/menu/ingredients/${newMenuItem.menu_id}`, {
+                    inventory_names: ingredientNames
                 });
             }
-            console.log("Posted ingredients");
     
-            // Optionally refetch or update UI
-            // fetchMenuItems(); // Or however you're refreshing the UI
+            // 3. Refresh state
+            setMenuItem([...menuItem, newMenuItem]);
     
-            console.log('Item added successfully!');
-        } catch (error) {
-            console.error('Error adding item:', error);
+            // Reset form
+            setNewItemName('');
+            setNewItemPrice('');
+            setNewItemCategory('');
+            setNewItemIngredients([]);
+            setShowAddModal(false);
+        } catch (err) {
+            console.error("Error adding menu item or ingredients:", err);
         }
     };
+    
     
       
 
@@ -253,129 +275,140 @@ function MenuItems() {
             </div>
         )}
 
-        {showAddModal && (
-            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
-                <div className="bg-white rounded-lg p-6 shadow-lg w-96">
-                    <h2 className="text-lg font-semibold mb-4">Add New Menu Item</h2>
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            const ingredientsArray = ingredientString
-                                .split(',')
-                                .map(i => i.trim())
-                                .filter(i => i.length > 0);
-
-                            setNewItemIngredients(ingredientsArray);
-                            console.log("Here");
-                            handleAddItem();
-                            setShowAddModal(false);
-                        }}
-                        className="space-y-4"
-                    >
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            className="w-full border rounded p-2"
-                            value={newItemName}
-                            onChange={(e) => setNewItemName(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="text"
-                            placeholder="Category"
-                            className="w-full border rounded p-2"
-                            value={newItemCategory}
-                            onChange={(e) => setNewItemCategory(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="number"
-                            placeholder="Price"
-                            className="w-full border rounded p-2"
-                            value={newItemPrice}
-                            onChange={(e) => setNewItemPrice(e.target.value)}
-                            required
-                        />
-
-                        {/* Ingredients Field */}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Ingredients (comma-separated)
-                            </label>
-                            <input
-                                type="text"
-                                className="w-full border border-gray-300 rounded-lg p-2"
-                                placeholder="e.g. 1, 2, 3"
-                                value={ingredientString}
-                                onChange={(e) => setIngredientString(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="flex justify-end gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setShowAddModal(false)}
-                                className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded"
-                            >
-                                Add
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        )}
-
         {/* Edit Modal */}
         {showEditModal && editItemData && (
             <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
                 <div className="bg-white rounded-lg p-6 shadow-lg w-96">
                     <h2 className="text-lg font-semibold mb-4">Edit Menu Item</h2>
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            // TODO: Add edit logic
-                            saveEditedMenuitem(editItemData.menu_id);
-                            setShowEditModal(false);
-                        }}
-                        className="space-y-4"
-                    >
+
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">Name</label>
                         <input
                             type="text"
-                            defaultValue={editItemData.name}
-                            className="w-full border rounded p-2"
-                            required
+                            value={editItemData.name}
+                            onChange={(e) =>
+                                setEditItemData({ ...editItemData, name: e.target.value })
+                            }
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">Category</label>
                         <input
                             type="text"
-                            defaultValue={editItemData.category}
-                            className="w-full border rounded p-2"
-                            required
+                            value={editItemData.category}
+                            onChange={(e) =>
+                                setEditItemData({ ...editItemData, category: e.target.value })
+                            }
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
+                    </div>
+
+                    <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700">Price</label>
                         <input
                             type="number"
-                            defaultValue={editItemData.price}
-                            className="w-full border rounded p-2"
-                            required
+                            value={editItemData.price}
+                            onChange={(e) =>
+                                setEditItemData({ ...editItemData, price: e.target.value })
+                            }
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
-                        <div className="flex justify-end gap-2">
-                            <button type="button" onClick={() => setShowEditModal(false)} className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded">
-                                Cancel
-                            </button>
-                            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                                Save
-                            </button>
-                        </div>
-                    </form>
+                    </div>
+
+                    <div className="flex justify-end gap-4">
+                        <button
+                            onClick={() => {
+                                setShowEditModal(false);
+                                setEditItemData(null);
+                            }}
+                            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg text-gray-800"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={() => saveEditedMenuitem(editItemData)}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                        >
+                            Save
+                        </button>
+                    </div>
                 </div>
             </div>
         )}
 
+{showAddModal && (
+    <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-white rounded-lg p-6 shadow-lg w-[500px]">
+            <h2 className="text-lg font-semibold mb-4">Add Menu Item</h2>
+            <div className="space-y-3">
+                <input
+                    type="text"
+                    placeholder="Name"
+                    value={newItemName}
+                    onChange={(e) => setNewItemName(e.target.value)}
+                    className="w-full border px-3 py-2 rounded-md"
+                />
+                <input
+                    type="number"
+                    placeholder="Price"
+                    value={newItemPrice}
+                    onChange={(e) => setNewItemPrice(e.target.value)}
+                    className="w-full border px-3 py-2 rounded-md"
+                />
+                <input
+                    type="text"
+                    placeholder="Category"
+                    value={newItemCategory}
+                    onChange={(e) => setNewItemCategory(e.target.value)}
+                    className="w-full border px-3 py-2 rounded-md"
+                />
+                <div>
+                    <p className="font-medium mb-1">Ingredients:</p>
+                    <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                        {inventoryItems.map(item => (
+                            <label key={item.inventory_id} className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    value={item.inventory_id}
+                                    onChange={(e) => {
+                                        const id = parseInt(e.target.value);
+                                        if (e.target.checked) {
+                                            setNewItemIngredients([...newItemIngredients, id]);
+                                        } else {
+                                            setNewItemIngredients(newItemIngredients.filter(i => i !== id));
+                                        }
+                                    }}
+                                    className="accent-emerald-500"
+                                />
+                                {item.name}
+                            </label>
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-5">
+                <button
+                    onClick={() => setShowAddModal(false)}
+                    className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg"
+                >
+                    Cancel
+                </button>
+                <button
+                    onClick={handleAddItem}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                >
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+)}
+
+
+
+        
         </div>
     );
 }
