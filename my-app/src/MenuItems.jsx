@@ -38,6 +38,8 @@ function MenuItems() {
     const [newItemName, setNewItemName] = useState('');
     const [newItemPrice, setNewItemPrice] = useState('');
     const [newItemCategory, setNewItemCategory] = useState('');
+
+    const defaultIngredients = ["Plastic Cups", "Bubble Tea Straws", "Cup Sealing Film"];
     const [newItemIngredients, setNewItemIngredients] = useState([]); // this should be an array of inventory ids
 
 
@@ -46,6 +48,15 @@ function MenuItems() {
     const [menuItem, setMenuItem] = useState([]);
 
     const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        if (showAddModal && inventoryItems.length > 0) {
+            const defaultIds = inventoryItems
+                .filter(item => defaultIngredients.includes(item.name))
+                .map(item => item.inventory_id);
+            setNewItemIngredients(defaultIds);
+        }
+    }, [showAddModal, inventoryItems]);
 
     useEffect(() => {
         const fetchMenuItems = async () => {
@@ -372,12 +383,13 @@ function MenuItems() {
                                 <input
                                     type="checkbox"
                                     value={item.inventory_id}
+                                    checked={newItemIngredients.includes(item.inventory_id)}
                                     onChange={(e) => {
                                         const id = parseInt(e.target.value);
                                         if (e.target.checked) {
-                                            setNewItemIngredients([...newItemIngredients, id]);
+                                            setNewItemIngredients(prev => [...prev, id]);
                                         } else {
-                                            setNewItemIngredients(newItemIngredients.filter(i => i !== id));
+                                            setNewItemIngredients(prev => prev.filter(i => i !== id));
                                         }
                                     }}
                                     className="accent-emerald-500"
