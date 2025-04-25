@@ -19,6 +19,7 @@ function PhoneModal ({onClose}) {
         if(!phoneRegex.test(phoneNumber)) { 
             return false;
         }
+        console.log("Phone number format is valid");
         return true;
     };
 
@@ -26,6 +27,7 @@ function PhoneModal ({onClose}) {
         const response = await axios.get(SERVER_API + "cashier/customer", {
             params: { phoneNumber: phoneNumber }
         });
+        console.log(response.data[0]);
         return (response.data[0] != undefined);
     }
 
@@ -143,7 +145,8 @@ function PhoneModal ({onClose}) {
                             <button
                                 type="submit"
                                 class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                                onClick={async () => {
+                                onClick={async (event) => {
+                                    event.preventDefault();
                                     if (!checkSyntax()) { // checks if syntax is correct
                                         setIsVisible(true);
                                     } 
