@@ -38,7 +38,9 @@ import Weather from './Weather.jsx';
 import shareTeaLogo from './assets/Sharetea+logo.avif'
 import CartModal from './CartModal.jsx'
 import GoogleTranslate from './GoogleTranslate.jsx'
-
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
+import SuccessModal from './SuccessModal.jsx';
 const SERVER_API = import.meta.env.VITE_SERVER_API;
 
 /**
@@ -215,7 +217,7 @@ function RewardsMenu () {
             const matchesCategory = selectedCategory ? item.categoryName === selectedCategory : true;
             const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
             if (rewardsFilter) { 
-                const rewardsSearch = item.points <= 750;
+                const rewardsSearch = item.points <= userPoints;
                 return matchesCategory && matchesSearch && rewardsSearch;
             }
             return matchesCategory && matchesSearch;
@@ -328,6 +330,7 @@ function RewardsMenu () {
          */
         const handleLogout = () => {
             googleLogout();
+            setOrderList([]);
             navigate('/');
         }
     
@@ -386,6 +389,19 @@ function RewardsMenu () {
             }
             return sum;
         }
+
+        const [successModal, setSuccessModal] = useState(false);
+
+        const openSuccessModal = () => {
+            setSuccessModal(true);
+        }
+
+        const closeSuccessModal = () => {
+            setSuccessModal(false);
+        }
+        
+        const { width, height } = useWindowSize()
+
     
         return (
             <div className = "flex flex-col bg-amber-50">
@@ -408,8 +424,21 @@ function RewardsMenu () {
                     </button>
                     {
                         isCartModalOpen && (
-                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} totalPoints={userPoints} customerID={customerID}>
+                            <CartModal onClose = {closeCartModal} orderList = {orderList} clearOrderList = {setOrderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} totalPoints={userPoints} customerID={customerID} displaySuccessful = {openSuccessModal}>
                             </CartModal>
+                        )
+                    }
+                    {
+                        successModal && (
+                            <>
+                                <Confetti
+                                    width={width}
+                                    height={height}
+                                />
+                                <SuccessModal onClose= {closeSuccessModal} handleLogout = {handleLogout}>
+                                </SuccessModal>
+                            </>
+                            
                         )
                     }
                     <GoogleTranslate/>
@@ -439,6 +468,10 @@ function RewardsMenu () {
                     <label htmlFor='rewardsCheckbox'>
                         Rewards items only
                     </label>
+                    <label>Points: </label>
+                    <p>
+                        {userPoints}
+                    </p>
                 </div>
     
                 {/* Main Content */}

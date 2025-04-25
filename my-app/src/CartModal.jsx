@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 
 const SERVER_API = import.meta.env.VITE_SERVER_API;
 
-function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, deleteItem, calculateTotal, totalPoints, customerID}) {
+function CartModal ({onClose, orderList, clearOrderList, incrementQuantity, decrementQuantity, deleteItem, calculateTotal, totalPoints, customerID, displaySuccessful}) {
 
     const [applyDiscount, setApplyDiscount] = useState(false);
     const [finalPrice, setFinalPrice] = useState(0);
@@ -37,7 +37,6 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
         setApplyDiscount(!applyDiscount);
     };
 
-
     const placeOrder = async () => {
         const data = {
             time: new Date(),
@@ -64,6 +63,9 @@ function CartModal ({onClose, orderList, incrementQuantity, decrementQuantity, d
                 console.error('Error updating customer reward points:', error);
             }
         }
+        onClose();
+        displaySuccessful();
+        clearOrderList([]);
     };
 
     return (
