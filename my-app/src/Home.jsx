@@ -44,7 +44,7 @@ function Home() {
                         onClick={() => navigate("/login")}
                         className="btn-cashier hover:cursor-pointer py-10 text-2xl font-semibold text-white rounded-2xl shadow-md transition"
                     >
-                        Cashier Menu
+                        Cashier POS System
                     </button>
 
                     {/* Button to navigate to the Manager Dashboard */}
@@ -52,7 +52,7 @@ function Home() {
                         onClick={() => navigate("/manager/dashboard")}
                         className="btn-manager hover:cursor-pointer py-10 text-2xl font-semibold text-white rounded-2xl shadow-md transition"
                     >
-                        Manager Menu
+                        Manager Dashboard
                     </button>
 
                     {/* Button to navigate to the Customer Kiosk */}
