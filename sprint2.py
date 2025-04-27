@@ -5,17 +5,16 @@ import numpy as np
 
 # Ideal story point dates (full sprint plan)
 ideal_dates = [
-    datetime(2025, 3, 23),
+datetime(2025, 3, 23),
     datetime(2025, 3, 27),
     datetime(2025, 3, 31),
-    datetime(2025, 4, 4),
-    datetime(2025, 4, 7),
-    datetime(2025, 4, 8),   # Start of Sprint 2 (backlog adjusted)
-    datetime(2025, 4, 11),  # Mid Sprint 2
+    datetime(2025, 4, 8),
+    datetime(2025, 4, 11),
     datetime(2025, 4, 15),
-    datetime(2025, 4, 16),
-    datetime(2025, 4, 18),
-    datetime(2025, 4, 23)
+    datetime(2025, 4, 20),
+    datetime(2025,4, 25),
+    datetime(2025, 4, 27)
+
 ]
 
 # Ideal linear burndown from 70 → 0
@@ -29,9 +28,12 @@ actual_dates = [
     datetime(2025, 4, 8),
     datetime(2025, 4, 11),
     datetime(2025, 4, 15),
+    datetime(2025, 4, 20),
+    datetime(2025,4, 25),
+    datetime(2025, 4, 27)
 ]
 
-actual_story_points = [70, 57, 42, 65, 50, 27]
+actual_story_points = [70, 57, 42, 65, 50, 27, 29, 12, 0]
 
 # Cumulative hours worked (manually approximated)
 hours_dates = [
@@ -39,10 +41,12 @@ hours_dates = [
     datetime(2025, 3, 31),
     datetime(2025, 4, 8),
     datetime(2025, 4, 11),
-    datetime(2025, 4, 15)
+    datetime(2025, 4, 15),
+    datetime(2025,4, 23),
+    datetime(2025, 4, 27)
 ]
 
-hours_cumulative = [8, 18, 21, 32, 46]
+hours_cumulative = [8, 18, 21, 32, 46, 12, 8 ]
 
 # Plot setup
 fig, ax1 = plt.subplots(figsize=(10, 6))
