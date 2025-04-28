@@ -4,7 +4,7 @@ import {useState, useEffect} from 'react';
 
 const SERVER_API = import.meta.env.VITE_SERVER_API;
 
-function CartModal ({onClose, orderList, clearOrderList, incrementQuantity, decrementQuantity, deleteItem, calculateTotal, totalPoints, customerID, displaySuccessful}) {
+function CartModal ({onClose, orderList, clearOrderList, incrementQuantity, decrementQuantity, deleteItem, calculateTotal, totalPoints, customerID, displaySuccessful, isRewardsMenu}) {
 
     const [applyDiscount, setApplyDiscount] = useState(false);
     const [finalPrice, setFinalPrice] = useState(0);
@@ -59,6 +59,9 @@ function CartModal ({onClose, orderList, clearOrderList, incrementQuantity, decr
                 await axios.get(SERVER_API + "cashier/updateCustomer", {
                     params: { customerID: customerID, pointsUsed: deductedUserPoints }
                 });
+                onClose();
+                displaySuccessful();
+                clearOrderList([]);
             } catch (error) {
                 console.error('Error updating customer reward points:', error);
             }
@@ -161,13 +164,18 @@ function CartModal ({onClose, orderList, clearOrderList, incrementQuantity, decr
                                 </button>
                             </div>
 
-                            <div className='flex justify-between py-2.5 items-center'>
-                                <p className='font-bold'>
-                                    Use Reward Points
-                                </p>
-                                <input type='checkbox' onChange={handleApplyDiscount}>
-                                </input>
-                            </div>
+                            {
+                                isRewardsMenu && (
+                                    <div className='flex justify-between py-2.5 items-center'>
+                                    <p className='font-bold'>
+                                        Use Reward Points
+                                    </p>
+                                    <input type='checkbox' onChange={handleApplyDiscount}>
+                                    </input>
+                                    </div>
+                                )
+                            }
+                           
                             
                             <hr>
                             </hr>
