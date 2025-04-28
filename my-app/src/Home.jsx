@@ -49,7 +49,7 @@ function Home() {
 
                     {/* Button to navigate to the Manager Dashboard */}
                     <button
-                        onClick={() => navigate("/manager/dashboard")}
+                        onClick={() => navigate("/managerLogin")}
                         className="btn-manager hover:cursor-pointer py-10 text-2xl font-semibold text-white rounded-2xl shadow-md transition"
                     >
                         Manager Dashboard
