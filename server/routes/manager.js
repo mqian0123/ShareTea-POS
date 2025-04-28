@@ -50,6 +50,7 @@ router.get('/top-employee', async (req, res) => {
             FROM orders o
             JOIN employees e ON o.employee_id = e.employee_id
             WHERE o.time_stamp >= NOW() - INTERVAL '1 month'
+              AND e.name != 'Self-Service Kiosk'
             GROUP BY e.employee_id, e.name
             ORDER BY orders_handled DESC
             LIMIT 1;
