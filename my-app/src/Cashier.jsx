@@ -39,6 +39,8 @@ import axios from 'axios';
 import SwipeableOrderButton from './SwipeableOrderButton.jsx'
 import { useLocation } from 'react-router-dom';
 import Weather from './Weather.jsx';
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 const SERVER_API = import.meta.env.VITE_SERVER_API;
 
@@ -420,31 +422,33 @@ function Cashier () {
                 </div>
                 <div className = "flex items-center">
                     {/* TODO: Dynamically update the number of orders placed by that employee during that day*/}
-                    <p className = "p-5 font-sans">
-                        Total: 20 Orders
-                    </p>
-                    <button
-                    className = "bg-white text-emerald-900 font-sans font-bold rounded-full p-5 m-5">
-                        Report 📜
-                    </button>
                     {/* Dropdown Avatar Menu */}
-                    <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" className="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full md:me-0 focus:ring-4 focus:ring-gray-100 bg-white p-3" type="button">
-                        <span className="sr-only">Open user menu</span>
-                        <img className="w-8 h-8 me-2 rounded-full" src={userIcon} alt="user photo" />
-                        {userName}
-                        <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
-                        </svg>
-                    </button>
-                    <div id="dropdownAvatarName" className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 ">
-                        <div className="px-4 py-3 text-sm text-gray-900">
-                        <div>{email}</div>
-                        </div>
-                        
-                        <div className="py-2">
-                        <a onClick = {handleLogout} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
-                        </div>
-                    </div>
+                    <Menu as="div" className="relative inline-block text-left">
+                            <div>
+                                <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
+                                {userName}
+                                <ChevronDownIcon aria-hidden="true" className="-mr-1 size-5 text-gray-400" />
+                                </MenuButton>
+                            </div>
+
+                            <MenuItems
+                                transition
+                                className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                            >
+                                <div className="py-1">
+                                    <MenuItem>
+                                    <button
+                                        type="submit"
+                                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden"
+                                        onClick={handleLogout}
+                                    >
+                                        Sign out
+                                    </button>
+                                    </MenuItem>
+                                </div>
+                            </MenuItems>
+                        </Menu>
+
 
                 </div>
             </div>

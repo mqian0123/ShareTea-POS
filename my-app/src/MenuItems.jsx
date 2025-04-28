@@ -1,7 +1,7 @@
 import './Manager.css';
 import logo from './assets/Share Tea.png';
 import { useNavigate } from 'react-router-dom';
-import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, Plus } from 'lucide-react';
+import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, Plus, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -172,7 +172,9 @@ function MenuItems() {
         { name: 'Employees', icon: <User size={25} />, path: '/manager/employees'},
         { name: 'Menu Items', icon: <SquarePen size={25} />, path: '/manager/menu', active: true },
         { name: 'Inventory', icon: <ChefHat  size={25} />,  path: '/manager/inventory'},
-        { name: 'Reports', icon: <ClipboardList size={25} />, path: '/manager/reports' }
+        { name: 'Reports', icon: <ClipboardList size={25} />, path: '/manager/reports' },
+        { name: 'Logout', icon: <LogOut size={25} />, path: '/' }
+
     ];
 
     
