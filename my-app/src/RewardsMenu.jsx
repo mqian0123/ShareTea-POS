@@ -424,7 +424,7 @@ function RewardsMenu () {
                     </button>
                     {
                         isCartModalOpen && (
-                            <CartModal onClose = {closeCartModal} orderList = {orderList} clearOrderList = {setOrderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} totalPoints={userPoints} customerID={customerID} displaySuccessful = {openSuccessModal}>
+                            <CartModal onClose = {closeCartModal} orderList = {orderList} clearOrderList = {setOrderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} totalPoints={userPoints} customerID={customerID} displaySuccessful = {openSuccessModal} isRewardsMenu={true}>
                             </CartModal>
                         )
                     }

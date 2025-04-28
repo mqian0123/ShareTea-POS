@@ -38,6 +38,11 @@ import Weather from './Weather.jsx';
 import shareTeaLogo from './assets/Sharetea+logo.avif'
 import CartModal from './CartModal.jsx'
 import GoogleTranslate from './GoogleTranslate.jsx'
+import SuccessModal from './SuccessModal.jsx';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
+
+
 
 const SERVER_API = import.meta.env.VITE_SERVER_API;
 
@@ -212,7 +217,6 @@ function KioskMenu () {
             { name: "Mango Mojito", price: 9.00, img: mangoMojito, isSpecial: false, categoryName: "Tea Mojito", menuID:  62, points: 900},
             { name: "Strawberry Mojito", price: 10.00, img: strawberryMojito, isSpecial: false, categoryName: "Tea Mojito", menuID: 63, points: 1000},
             { name: "Wintermelon Creama", price: 10.00, img: wintermelonCreama, isSpecial: false, categoryName: "Creama", menuID: 74, points: 1000},
-    
         ]
     
         const categories = [
@@ -402,6 +406,18 @@ function KioskMenu () {
             return sum;
         }
     
+        const [successModal, setSuccessModal] = useState(false);
+
+        const openSuccessModal = () => {
+            setSuccessModal(true);
+        }
+
+        const closeSuccessModal = () => {
+            setSuccessModal(false);
+        }
+        
+        const { width, height } = useWindowSize()
+
         return (
             <div className = "flex flex-col bg-amber-50">
                 {/* Navbar */}
@@ -423,8 +439,21 @@ function KioskMenu () {
                     </button>
                     {
                         isCartModalOpen && (
-                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal}>
+                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} displaySuccessful = {openSuccessModal} clearOrderList = {setOrderList}>
                             </CartModal>
+                        )
+                    }
+                    {
+                        successModal && (
+                            <>
+                                <Confetti
+                                    width={width}
+                                    height={height}
+                                />
+                                <SuccessModal onClose= {closeSuccessModal} handleLogout = {handleLogout}>
+                                </SuccessModal>
+                            </>
+                            
                         )
                     }
                     <GoogleTranslate/>
