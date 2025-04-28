@@ -17,7 +17,7 @@ import CustomModal from "./CustomModal.jsx";
  * @author Seshadithya Saravanan
  */
 
-function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
+function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID, points=null}) {
 
     // State to track whether the modal for the toppings selection is open
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +30,7 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
     };
 
         return (
-            <div className="w-full max-w-sm bg-white border border-red-600 rounded-lg shadow-sm ">
+            <div className="w-full max-w-sm bg-white border-2 border-[#FFD700] rounded-lg shadow-sm">
 
                 {/* Item Image  */}
                 <a href="#">
@@ -71,27 +71,51 @@ function ItemCard ({img, itemName, itemPrice, isSpecial, addToOrder, menuID}) {
                         <span className="text-3xl font-bold text-gray-900">${itemPrice}</span>
                         <button 
                             onClick={handleOpenModal}
-                            className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                            className="text-white 
+               bg-gradient-to-r 
+               from-[#FFD700] 
+               via-[#FFC107] 
+               to-[#FFB300] 
+               hover:bg-gradient-to-br 
+               hover:brightness-110 
+               focus:ring-4 
+               focus:outline-none 
+               focus:ring-yellow-300 
+               dark:focus:ring-yellow-800 
+               shadow-lg 
+               shadow-yellow-500/50 
+               dark:shadow-lg 
+               dark:shadow-yellow-800/80 
+               font-medium 
+               rounded-lg 
+               text-sm 
+               px-5 
+               py-2.5 
+               text-center 
+               me-2 
+               mb-2"
                             type="button"> 
                             +
                         </button>
                     </div>
-                    
+                    {
+                            points !== null && (
+                                <span>{points} points</span>
+                            )
+                        }
                     {/* Conditionally rendering the toppings modal based on the type of drink and if the user clicked on the add to cart button 
                         //TODO: Center the modal
                     */}
                         {   
                                 isSpecial ? (
                                     isModalOpen && (
-                                        <CustomModal itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID}>
+                                        <CustomModal itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID} points={points}>
                                         </CustomModal>
                                     )
                                     
                                 ) : (
-
-
                                     isModalOpen && (
-                                            <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID}>
+                                            <Modal  itemName = {itemName} itemPrice = {itemPrice} img = {img} onClose={handleCloseModal} addToOrder = {addToOrder} menuID = {menuID} points={points}>
                                             </Modal>
                                     )
                                 )

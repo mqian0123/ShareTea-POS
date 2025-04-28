@@ -112,8 +112,21 @@ router.get('/addCustomer', async (req, res) => {
 
 });
 
+router.get('/updateCustomer', async (req, res) => {
+  try {
+    const customerID = req.query.customerID;
+    const pointsUsed = req.query.pointsUsed;
+    await pool.query('UPDATE customers SET total_reward_points = total_reward_points - $1 WHERE customer_id = $2',
+      [pointsUsed, customerID]);
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 
-// add order
+});
+
+// addOrder
 router.post('/addOrder', async (req, res) => {
     const { time, payment, points, cost, customerID, employeeID, orderList } = req.body;
     let orderID = -1;

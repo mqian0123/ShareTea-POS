@@ -7,6 +7,20 @@
  */
 
 function Categories (props) {
+
+    const calculateItemCount = (categoryName) => {
+        let sum = 0;
+        for (let index = 0; index < props.menuList.length; index++) {
+            if (categoryName === "All") {
+                return props.menuList.length;
+            }
+            if (props.menuList[index].categoryName === categoryName) {
+                sum++;
+            }
+        }
+        return sum;
+    }
+
     return (
         
         <button 
@@ -23,7 +37,7 @@ function Categories (props) {
 
             {/* //TODO: Change the number of items dynamically */ }
             <p className = "text-xs whitespace-nowrap">
-                50 items
+                {calculateItemCount(props.categoryName)}
             </p>
         </button>
     )

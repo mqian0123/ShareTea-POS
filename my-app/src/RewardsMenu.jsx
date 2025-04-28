@@ -38,12 +38,9 @@ import Weather from './Weather.jsx';
 import shareTeaLogo from './assets/Sharetea+logo.avif'
 import CartModal from './CartModal.jsx'
 import GoogleTranslate from './GoogleTranslate.jsx'
-import SuccessModal from './SuccessModal.jsx';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
-
-
-
+import SuccessModal from './SuccessModal.jsx';
 const SERVER_API = import.meta.env.VITE_SERVER_API;
 
 /**
@@ -91,7 +88,7 @@ const getCookie = (name) => {
  * 
  */
 
-function KioskMenu () {
+function RewardsMenu () {
 
         // Get the current date and format it to display the day, date, and month
         const currentDate = new Date();
@@ -99,28 +96,35 @@ function KioskMenu () {
     
         // Location hook to get state from previous page (login page) so we can get the user's name and email from the google oAuth API
         const location = useLocation();
-        const { userName = "Guest", email = "guest.gmail.com"} = location.state || {}; // Destructure userName and email from state
-    
-        const [employeeID, setEmployeeID] = useState(null);
+        // const { userName = "Guest", email = "guest.gmail.com"} = location.state || {}; // Destructure userName and email from state
+
         const [customerID, setCustomerID] = useState(1);
-    
-        useEffect(() => {
-            const fetchEmployeeID = async () => {
-                try {
-                const response = await axios.get(SERVER_API + "cashier/employee", {
-                    params: { email: email }
-                });
-                    setEmployeeID(response.data[0]['employee_id'])
-                } catch (error) {
-                console.error('Error fetching employee ID:', error);
-                }
-            };
-        
-            fetchEmployeeID();
-        }, []); // [] ensures it runs only once on mount
+        const [userPoints, setUserPoints] = useState(-1);
+        const [userName, setUserName] = useState("Guest");
+        const [email, setEmail] = useState("guest@gmail.com");
+
+        const phoneNumber = location.state?.phoneNumber;
+        console.log("phone number: " + phoneNumber);
     
         // navigate hook to navigate to different pages
         const navigate = useNavigate();
+
+
+        useEffect(() => {
+            const fetchCustomer = async () => {
+                try {
+                    const response = await axios.get(SERVER_API + "cashier/customer", {
+                        params: { phoneNumber: phoneNumber }
+                    });
+                    setCustomerID(response.data[0]['customer_id']);
+                    setUserPoints(response.data[0]['total_reward_points']);
+                    // setUserName(response.data[0]['name']) // TODO: name does not exist in the customers database
+                } catch (error) {
+                    console.error('Error fetching employee ID:', error);
+                }
+            };  
+            fetchCustomer();
+          }, []); // [] ensures it runs only once on mount
     
         // State hooks to store the selected category, search term, and order list
         const [selectedCategory, setSelectedCategory] = useState(null);
@@ -144,60 +148,22 @@ function KioskMenu () {
         //     }
         // }, [])
     
-        // State hook for customer name so that it can be cleared after the order is placed
+        // // State hook for customer name so that it can be cleared after the order is placed
         const [customerName, setCustomerName] = useState(() => {
             const savedCustomerName = getCookie('customerName');
             return savedCustomerName || '';
         });
     
-        const [phoneNumber, setPhoneNumber] = useState(() => {
-            const savedPhoneNumber = getCookie('phoneNumber');
-            return savedPhoneNumber || 'xxx-xxx-xxxx'
-        });
+        // const [phoneNumber, setPhoneNumber] = useState(() => {
+        //     const savedPhoneNumber = getCookie('phoneNumber');
+        //     return savedPhoneNumber || 'xxx-xxx-xxxx'
+        // });
     
         const [selectedTable, setSelectedTable] = useState(() => {
             const savedTable = getCookie('selectedTable');
             return savedTable || 'Choose a Table';
         });
-    
-        // phoneNumber must be stored as a strong in the format "(XXX) XXX-XXXX"
-        const fetchCustomerID = async () => {
-            console.log("fetchCustomerID?");
-            const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
-            if(!phoneRegex.test(phoneNumber)) { // phone number doesnt match current regex expression
-                return;
-            }
-            else {
-                try {
-                    const response = await axios.get(SERVER_API + "cashier/customer", {
-                        params: { phoneNumber: phoneNumber }
-                    });
-                    console.log("upon obtaining phone number: ");
-                    console.log(response.data[0]);
-                    if(response.data[0] == undefined) { // phone number not yet in databse, add into system
-                        const newResponse = await axios.get(SERVER_API + "cashier/addCustomer", {
-                            params: { phoneNumber: phoneNumber }
-                        });
-                        setCustomerID(newResponse.data[0]['customer_id']);
-                        console.log("Account added into database!");
-    
-                    }
-                    else {
-                        setCustomerID(response.data[0]['customer_id']);
-                    }
-                    } catch (error) {
-                    console.error('Error fetching employee ID:', error);
-                    }
-            }
-        };  
-        
-        useEffect(() => {
-            if (phoneNumber) {
-                fetchCustomerID();
-                }
-            }, [phoneNumber]);
-        // State hook for the current order type
-        // const [currentOrderType, setOrderType] = useState("");
+            
         // Menu items
         const menuItems = [
             { name: "Wintermelon Lemonade", price: 7.00, img: wintermelonLemonade, isSpecial: false, categoryName: "Fruit Tea", menuID:55, points:700},
@@ -217,6 +183,7 @@ function KioskMenu () {
             { name: "Mango Mojito", price: 9.00, img: mangoMojito, isSpecial: false, categoryName: "Tea Mojito", menuID:  62, points: 900},
             { name: "Strawberry Mojito", price: 10.00, img: strawberryMojito, isSpecial: false, categoryName: "Tea Mojito", menuID: 63, points: 1000},
             { name: "Wintermelon Creama", price: 10.00, img: wintermelonCreama, isSpecial: false, categoryName: "Creama", menuID: 74, points: 1000},
+    
         ]
     
         const categories = [
@@ -229,6 +196,17 @@ function KioskMenu () {
             { name: "Creama", status: "Available"},
         ]
     
+        const [rewardsFilter, setRewardsFilter] = useState(false);
+
+        const handleRewardsCheckboxChange = () => {
+            if (rewardsFilter) {
+                setRewardsFilter(false);
+                return;
+            }
+            setRewardsFilter(true);
+            return;
+        }
+
         /**
          * @description Filter the menu items based on the selected category and search term
          * @returns {Array} filteredItems - The filtered menu items
@@ -238,6 +216,10 @@ function KioskMenu () {
         const filteredItems = menuItems.filter(item => {
             const matchesCategory = selectedCategory ? item.categoryName === selectedCategory : true;
             const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+            if (rewardsFilter) { 
+                const rewardsSearch = item.points <= userPoints;
+                return matchesCategory && matchesSearch && rewardsSearch;
+            }
             return matchesCategory && matchesSearch;
         });
     
@@ -272,7 +254,8 @@ function KioskMenu () {
                 iceLevel: selectedIceLevel,
                 sugarLevel: selectedSugarLevel,
                 total: price,
-                meunID: menuID
+                meunID: menuID,
+                points: price * 100
             };
             setOrderList([...orderList, newItem]);
         };
@@ -285,7 +268,7 @@ function KioskMenu () {
          * @author Seshadithya Saravanan
          */
         const incrementQuantity = (name) => {
-            setOrderList(orderList.map((item) => item.name === name ? {...item, quantity: item.quantity + 1, total: (item.quantity + 1) * item.price } : item));
+            setOrderList(orderList.map((item) => item.name === name ? {...item, quantity: item.quantity + 1, total: (item.quantity + 1) * item.price, points: (item.quantity + 1) * item.price * 100 } : item));
         }
     
         /**
@@ -297,7 +280,7 @@ function KioskMenu () {
          */
         const decrementQuantity = (name) => {
             setOrderList(orderList.map((item) => item.name === name && item.quantity > 1 
-                                                                ? {...item, quantity: item.quantity - 1, total: (item.quantity - 1) * item.price } 
+                                                                ? {...item, quantity: item.quantity - 1, total: (item.quantity - 1) * item.price, points: (item.quantity - 1) * item.price * 100} 
                                                                 : item));         
         }
         
@@ -347,6 +330,7 @@ function KioskMenu () {
          */
         const handleLogout = () => {
             googleLogout();
+            setOrderList([]);
             navigate('/');
         }
     
@@ -405,7 +389,7 @@ function KioskMenu () {
             }
             return sum;
         }
-    
+
         const [successModal, setSuccessModal] = useState(false);
 
         const openSuccessModal = () => {
@@ -418,6 +402,7 @@ function KioskMenu () {
         
         const { width, height } = useWindowSize()
 
+    
         return (
             <div className = "flex flex-col bg-amber-50">
                 {/* Navbar */}
@@ -439,7 +424,7 @@ function KioskMenu () {
                     </button>
                     {
                         isCartModalOpen && (
-                            <CartModal onClose = {closeCartModal} orderList = {orderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} displaySuccessful = {openSuccessModal} clearOrderList = {setOrderList}>
+                            <CartModal onClose = {closeCartModal} orderList = {orderList} clearOrderList = {setOrderList} incrementQuantity = {incrementQuantity} decrementQuantity = {decrementQuantity} deleteItem={deleteItem} calculateTotal={calculateTotal} totalPoints={userPoints} customerID={customerID} displaySuccessful = {openSuccessModal} isRewardsMenu={true}>
                             </CartModal>
                         )
                     }
@@ -478,7 +463,15 @@ function KioskMenu () {
                             </div>
                         </div>
                     </div>
-
+                    <input onChange = {handleRewardsCheckboxChange} id = "rewardsCheckbox" type='checkbox'>
+                    </input>
+                    <label htmlFor='rewardsCheckbox'>
+                        Rewards items only
+                    </label>
+                    <label>Points: </label>
+                    <p>
+                        {userPoints}
+                    </p>
                 </div>
     
                 {/* Main Content */}
@@ -534,7 +527,8 @@ function KioskMenu () {
                                 isSpecial = {item.isSpecial}
                                 categoryName={item.categoryName}
                                 menuID = {item.menuID}
-                                addToOrder = {addToOrder}/>
+                                addToOrder = {addToOrder}
+                                />
                             ))}
                         </div>
                     </div>
@@ -543,4 +537,4 @@ function KioskMenu () {
     }
 
 
-export default KioskMenu;
+export default RewardsMenu;
