@@ -247,20 +247,34 @@ router.patch('/menu/:id', async (req, res) => {
 // Delete a menu item by ID
 router.delete('/menu/:id', async (req, res) => {
     const { id } = req.params;
+
     try {
+        await pool.query('BEGIN');
+        await pool.query('DELETE FROM junct_inventory_items WHERE menu_id = $1', [id]);
         const result = await pool.query(
             'DELETE FROM menu_items WHERE menu_id = $1 RETURNING *',
             [id]
         );
+
         if (result.rows.length === 0) {
+            await pool.query('ROLLBACK');
             return res.status(404).json({ error: 'Menu item not found' });
         }
-        res.json({ message: 'Menu item deleted successfully', deletedItem: result.rows[0] });
+
+        await pool.query('COMMIT');
+
+        res.json({
+            message: 'Menu item deleted successfully',
+            deletedItem: result.rows[0]
+        });
+
     } catch (err) {
+        await pool.query('ROLLBACK');
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 // Get menu item by ID
 router.get('/menu/:id', async (req, res) => {

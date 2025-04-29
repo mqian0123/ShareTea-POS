@@ -55,13 +55,15 @@ function CartModal ({onClose, orderList, clearOrderList, incrementQuantity, decr
 
         // update total_rewards_points
         if(applyDiscount) {
+            // console.log()
             try {
-                await axios.get(SERVER_API + "cashier/updateCustomer", {
-                    params: { customerID: customerID, pointsUsed: deductedUserPoints }
-                });
                 onClose();
                 displaySuccessful();
                 clearOrderList([]);
+                await axios.get(SERVER_API + "cashier/updateCustomer", {
+                    params: { customerID: customerID, pointsUsed: deductedUserPoints }
+                });
+
             } catch (error) {
                 console.error('Error updating customer reward points:', error);
             }
