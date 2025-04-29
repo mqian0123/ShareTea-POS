@@ -1,6 +1,6 @@
 import './Manager.css';
 import logo from './assets/Share Tea.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, UserPlus, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -34,7 +34,12 @@ function Employees() {
     });
 
     const [searchQuery, setSearchQuery] = useState('');
-    
+
+    const [name, setName] = useState('');
+    useEffect(() => {
+        const savedName = localStorage.getItem('name');
+        setName(savedName || 'Guest');
+    }, []);
     //List of current employees
     //TODO: Fetch from backend
     //  completed by yahia 
@@ -45,7 +50,14 @@ function Employees() {
         const fetchEmployees = async () => {
             try {
                 const response = await axios.get(SERVER_API + 'manager/employees');
-                setEmployees(response.data);
+                const data = response.data;
+
+                const filteredEmployees = data.filter(
+                    (employee) => employee.name !== 'Self-Service Kiosk'
+                );
+
+                setEmployees(filteredEmployees);
+
             } catch (error) {
                 console.error('Error fetching employees:', error);
                 setEmployees([]);  // Set empty data if there's an error
@@ -189,7 +201,7 @@ function Employees() {
             <div className="flex-1 p-10 bg-gray-50 overflow-y-auto">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-2xl font-semibold text-gray-800">Hello, Stewart Little</h1>
+                        <h1 className="text-2xl font-semibold text-gray-800">Hello, {name}</h1>
                         <p className="text-sm text-gray-500">Showing ShareTea's Employees</p>
                     </div>
                 </div>

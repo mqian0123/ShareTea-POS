@@ -421,6 +421,7 @@ function KioskMenu () {
         const { width, height } = useWindowSize()
 
         return (
+            <main>
             <div className = "flex flex-col bg-amber-50">
                 {/* Navbar */}
                 <div className = "flex items-center justify-between p-5">
@@ -547,7 +548,8 @@ function KioskMenu () {
                             ))}
                         </div>
                     </div>
-            </div>      
+            </div>  
+            </main>    
         )
     }
 

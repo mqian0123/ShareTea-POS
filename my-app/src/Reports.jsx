@@ -1,6 +1,6 @@
 import './Manager.css';
 import logo from './assets/Share Tea.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, PackagePlus, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -16,6 +16,11 @@ function Reports(){
     const [xReport, setXReport] = useState([]);
     const [zReport, setZReport] = useState([]);
 
+    const [name, setName] = useState('');
+    useEffect(() => {
+        const savedName = localStorage.getItem('name');
+        setName(savedName || 'Guest');
+    }, []);
 
 
     /**
@@ -124,14 +129,14 @@ function Reports(){
             {/* Header Section */}
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Hello, Stewart Little</h1>
+                    <h1 className="text-2xl font-semibold text-gray-800">Hello, {name}</h1>
                     <p className="text-sm text-gray-500">Showing ShareTea's Reports</p>
                 </div>
                 <div>
                     <select
                         value={selectedReport}
                         onChange={(e) => setSelectedReport(e.target.value)}
-                        className="p-4 border rounded-md bg-white shadow-sm focus:outline-none"
+                        className="p-4 border rounded-md bg-white shadow-sm focus:outline-none w-42"
                     >
                         <option value="inventory">Inventory Usage</option>
                         <option value="x">X Report</option>
@@ -147,7 +152,7 @@ function Reports(){
                     <select
                         value={timeframe}
                         onChange={(e) => setTimeframe(e.target.value)}
-                        className="p-3 border rounded-md bg-white shadow-sm focus:outline-none"
+                        className="p-3 border rounded-md bg-white shadow-sm focus:outline-none w-32"
                     >
                         <option value="day">Last Day</option>
                         <option value="week">Last Week</option>

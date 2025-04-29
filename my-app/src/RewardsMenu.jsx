@@ -106,7 +106,6 @@ function RewardsMenu () {
         const [email, setEmail] = useState("guest@gmail.com");
 
         const phoneNumber = location.state?.phoneNumber;
-        console.log("phone number: " + phoneNumber);
     
         // navigate hook to navigate to different pages
         const navigate = useNavigate();
@@ -119,6 +118,7 @@ function RewardsMenu () {
                         params: { phoneNumber: phoneNumber }
                     });
                     setCustomerID(response.data[0]['customer_id']);
+                    setEmail(response.data[0]['email']);
                     setUserPoints(response.data[0]['total_reward_points']);
                     // setUserName(response.data[0]['name']) // TODO: name does not exist in the customers database
                 } catch (error) {
@@ -416,6 +416,7 @@ function RewardsMenu () {
 
 
         return (
+            <main>        
             <div className = "flex flex-col bg-amber-50">
                 {/* Navbar */}
                 <div className = "flex items-center justify-between p-5">
@@ -477,7 +478,7 @@ function RewardsMenu () {
                         <Menu as="div" className="relative inline-block text-left">
                             <div>
                                 <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
-                                {userName}
+                                {email}
                                 <ChevronDownIcon aria-hidden="true" className="-mr-1 size-5 text-gray-400" />
                                 </MenuButton>
                             </div>
@@ -570,7 +571,8 @@ function RewardsMenu () {
                             ))}
                         </div>
                     </div>
-            </div>      
+            </div>  
+            </main>        
         )
     }
 

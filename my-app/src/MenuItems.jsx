@@ -1,6 +1,6 @@
 import './Manager.css';
 import logo from './assets/Share Tea.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, User, ChefHat, SquarePen, ClipboardList, Trash2, Plus, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -18,6 +18,11 @@ function MenuItems() {
     const [ingredientString, setIngredientString] = useState('');
 
     const [inventoryItems, setInventoryItems] = useState([]);
+    const [name, setName] = useState('');
+    useEffect(() => {
+        const savedName = localStorage.getItem('name');
+        setName(savedName || 'Guest');
+    }, []);
 
     useEffect(() => {
         const fetchInventory = async () => {
@@ -211,7 +216,7 @@ function MenuItems() {
             <div className="flex-1 p-10 bg-gray-50 overflow-y-auto">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-2xl font-semibold text-gray-800">Hello, Stewart Little</h1>
+                        <h1 className="text-2xl font-semibold text-gray-800">Hello, {name}</h1>
                         <p className="text-sm text-gray-500">Showing ShareTea's Menu Items</p>
                     </div>
                 </div>

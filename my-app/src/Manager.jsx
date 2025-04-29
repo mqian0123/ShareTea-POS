@@ -1,6 +1,6 @@
 import './Manager.css';
 import logo from './assets/Share Tea.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, BarChart2, SquarePen, FileText, User, ChefHat, ClipboardList, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -28,6 +28,7 @@ const SERVER_API = import.meta.env.VITE_SERVER_API;
 function Manager() {
     // Hook to programmatically navigate between routes
     const navigate = useNavigate();
+
     const [pieData, setPieData] = useState([
         { name: 'Card', value: 0.00, color: '#A3E635' },
         { name: 'Cash', value: 0.00, color: '#FACC15' },
@@ -36,6 +37,13 @@ function Manager() {
     const [totalOrders, setTotalOrders] = useState(0);
     const [topEmployee, setTopEmployee] = useState('');
     const [barChartData, setBarChartData] = useState([]);
+
+    // const name = location.state?.userName || "Guest";
+    const [name, setName] = useState('');
+    useEffect(() => {
+        const savedName = localStorage.getItem('name');
+        setName(savedName || 'Guest');
+    }, []);
 
     // Fetch gross revenue data
     useEffect(() => {
@@ -189,8 +197,8 @@ function Manager() {
                 {/* Header Section */}
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-2xl font-semibold text-gray-800">Hello, Stewart Little</h1>
-                        <p className="text-sm text-gray-500">Showing ShareTea's stats</p>
+                        <h1 className="text-2xl font-semibold text-gray-800">Hello, {name}</h1>
+                        <p className="text-sm text-gray-500">Showing ShareTea's Stats</p>
                     </div>
                 </div>
 
@@ -237,27 +245,29 @@ function Manager() {
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-md font-semibold text-gray-700">Monthly Sales Report</h3>
                         </div>
-                        <BarChart
-                            width={700}
-                            height={200}
-                            data={barChartData}
-                            margin={{ top: 5, right: 0, left: 15, bottom: 15 }}
-                        >
-                            <XAxis dataKey="name">
-                                <Label value="Month" dy={20} position="insideBottom" />
-                            </XAxis>
-                            <YAxis>
-                                <Label
-                                    value="Sales ($)"
-                                    dx={-12}
-                                    angle={-90}
-                                    position="insideLeft"
-                                    style={{ textAnchor: 'middle' }}
-                                />
-                            </YAxis>
-                            <Tooltip />
-                            <Bar dataKey="value" fill="#86EFAC" radius={[5, 5, 0, 0]} />
-                        </BarChart>
+                        <div style={{ width: '100%', height: '200px', marginTop: '50px' }}>
+                            <BarChart
+                                width={600}
+                                height={200}
+                                data={barChartData}
+                                margin={{ top: 5, right: 0, left: 15, bottom: 15 }}
+                            >
+                                <XAxis dataKey="name">
+                                    <Label value="Month" dy={20} position="insideBottom" />
+                                </XAxis>
+                                <YAxis>
+                                    <Label
+                                        value="Sales ($)"
+                                        dx={-12}
+                                        angle={-90}
+                                        position="insideLeft"
+                                        style={{ textAnchor: 'middle' }}
+                                    />
+                                </YAxis>
+                                <Tooltip />
+                                <Bar dataKey="value" fill="#86EFAC" radius={[5, 5, 0, 0]} />
+                            </BarChart>
+                        </div>
                     </div>
                 </div>
             </div>

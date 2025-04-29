@@ -49,9 +49,11 @@ function ManagerLogin () {
                             <div className='flex justify-center'>
                                 <GoogleLogin shape='pill'
                                             onSuccess={(response) => {
-                                                const userName = jwtDecode(response.credential).name;
+                                                const name = jwtDecode(response.credential).name;
                                                 const email = jwtDecode(response.credential).email;
-                                                navigate('/manager/dashboard',  { state: {userName, email} });
+                                                localStorage.setItem('name', name);
+                                                navigate('/manager/dashboard');
+
                                             }
                                             }
                                             onError={() => {
